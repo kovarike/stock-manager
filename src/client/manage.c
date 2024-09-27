@@ -77,20 +77,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../util/global.h"
 #include "../util/command.h"
-
-#define MAX_INPUT 1024
-#define MAX_PRODUTOS 100
-
-// typedef struct {
-//     int codigo;
-//     float preco_custo;
-//     float preco_novo;
-//     int estoque;
-// } Produto;
-
-// Produto* produtos;  
-// int total_produtos = 0;
+Produto* produtos = NULL;
+int total_produtos = 0;
 
 void manage_products() {
     int codigo;
@@ -101,26 +91,26 @@ void manage_products() {
 
     while (1) {
         char input[MAX_INPUT];
-        printf("\nDigite um comando (inserir, remover, listar, zerados, sair): ");
+        printf("\nDigite um dos comandos (-i, -rm, -ls, -lz, sair): ");
         fgets(input, MAX_INPUT, stdin);
-        input[strcspn(input, "\n")] = '\0';  // Remove a nova linha
+        input[strcspn(input, "\n")] = '\0'; 
 
-        if (strcmp(input, "listar") == 0) {
+        if (strcmp(input, "-ls") == 0) {
             command_get();
-        } else if (strcmp(input, "zerados") == 0) {
+        } else if (strcmp(input, "-lz") == 0) {
             command_Zero();
         } else if (strcmp(input, "sair") == 0) {
             break;  // Sair do gerenciamento
-        } else if (strcmp(input, "inserir") == 0) {
+        } else if (strcmp(input, "-i") == 0) {
             printf("Código do produto: ");
             scanf("%d", &codigo);
             printf("Preço de custo: ");
             scanf("%f", &preco_custo);
             printf("Estoque: ");
             scanf("%d", &estoque);
-            command_Insert(codigo, estoque);
+            command_Insert(codigo, preco_custo, estoque);
             getchar();  // Limpa o buffer
-        } else if (strcmp(input, "remover") == 0) {
+        } else if (strcmp(input, "-rm") == 0) {
             printf("Código do produto: ");
             scanf("%d", &codigo);
             printf("Quantidade a remover: ");

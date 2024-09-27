@@ -13,16 +13,16 @@ EXECUTABLE = app
 all: $(EXECUTABLE)
 
 # Regra para compilar o arquivo objeto
-app.o: app.c util/command.h util/sh.h
+app.o: app.c util/global.h util/sh.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-service/sh.o: service/sh.c util/command.h util/sh.h
+service/sh.o: service/sh.c util/command.h util/sh.h util/global.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-service/command.o: service/command.c util/command.h util/sh.h
+service/command.o: service/command.c util/command.h util/global.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-client/manage.o: client/manage.c util/command.h
+client/manage.o: client/manage.c util/command.h util/global.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Compilando o executável
