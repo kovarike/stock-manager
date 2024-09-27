@@ -37,3 +37,7 @@ docker cp [NOME-DO-CONTAINER]:/src/App_StockManager.exe "F:\\www\\c\\apps\\"
 
 ```
 Este comando copia o conteúdo do diretório ``` /src/App_StockManager ``` do contêiner ``` [NOME-DO-CONTAINER] ``` para o diretório ``` F:\www\c\apps\ ``` no seu sistema local. Certifique-se de que o contêiner esteja em execução e que o caminho de destino exista.
+
+<div>
+    <img src="./src/public/readme.png" alt="StockManager" style="max-width: 100%; height: auto;">
+</div>

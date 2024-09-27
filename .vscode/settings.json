@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "command.h": "c",
+        "sh.h": "c",
+        "global.h": "c"
+    }
+}
