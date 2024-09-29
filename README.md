@@ -41,3 +41,7 @@ Este comando copia o conteúdo do diretório ``` /src/App_StockManager ``` do co
 <div>
     <img src="./src/public/readme.png" alt="StockManager" style="max-width: 100%; height: auto;">
 </div>
+
+## License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for more details.
