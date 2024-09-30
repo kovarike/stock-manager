@@ -1,1 +1,6 @@
 src/**/*.o
+
+src/**/*.exe
+src/**/*.o
+
+src/**/*app

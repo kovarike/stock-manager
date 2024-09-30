@@ -22,7 +22,6 @@ extern int total_produtos;
 typedef struct {
     char id[100];
     char name[1024];
-    char codeId[10];
     char value[100];  
 } Data;
 
