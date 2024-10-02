@@ -30,8 +30,7 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         choco install mingw -y --yes
-        powershell -Command "Invoke-WebRequest -Uri 'https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip' -OutFile 'sqlite-dll-win32-x86-3390500.zip'"
-        powershell -Command "Expand-Archive -Path 'sqlite-dll-win32-x86-3390500.zip' -DestinationPath 'C:\usr\local\lib'"
+        choco install sqlite --version 3.39.5 -y  # Ajuste a versão conforme necessário
 
     - name: Build with ${{ matrix.compiler }}
       run: |
@@ -77,15 +76,14 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/StockManager-linux.tar.gz  # Altere o caminho conforme necessário
+        asset_path: ${{ runner.workspace }}/StockManager-linux.tar.gz
         asset_name: StockManager-linux.tar.gz
         asset_content_type: application/gzip
 
-    - name: Upload Windows Binary
-      if: needs.build.outputs.binaries == 'StockManager-windows.zip'
+    - name: Upload Windows Release Asset
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/StockManager-windows.zip
+        asset_path: ${{ runner.workspace }}/StockManager-windows.zip
         asset_name: StockManager-windows.zip
         asset_content_type: application/zip
