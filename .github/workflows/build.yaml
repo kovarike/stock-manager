@@ -53,19 +53,20 @@ jobs:
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
           tar -czvf StockManager-linux.tar.gz ./StockManager
+          echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
           tar -czvf StockManager-macos.tar.gz ./StockManager
+          echo "StockManager-macos.tar.gz" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" == "windows-latest" ]; then
           powershell -Command "Compress-Archive -Path .\StockManager.exe -DestinationPath StockManager-windows.zip"
+          echo "StockManager-windows.zip" >> $GITHUB_ENV
         fi
 
     - name: Upload binaries as artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Binaries-${{ matrix.os }}-${{ matrix.compiler }}
-        path: |
-          ${{ matrix.os == 'windows-latest' && 'StockManager-windows.zip' || 'StockManager-linux.tar.gz' }}
-          ${{ matrix.os == 'macos-latest' && 'StockManager-macos.tar.gz' || '' }}
+        path: ${{ env.GITHUB_ENV }}
 
   release:
     runs-on: ubuntu-latest
@@ -89,10 +90,6 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: |
-          ${{ needs.build.outputs.binaries }}
-        asset_name: |
-          ${{ matrix.os == 'windows-latest' && 'StockManager-windows.zip' || '' }}
-          ${{ matrix.os == 'ubuntu-latest' && 'StockManager-linux.tar.gz' || '' }}
-          ${{ matrix.os == 'macos-latest' && 'StockManager-macos.tar.gz' || '' }}
+        asset_path: ${{ env.GITHUB_ENV }}
+        asset_name: ${{ needs.build.outputs.binaries }}
         asset_content_type: application/octet-stream
