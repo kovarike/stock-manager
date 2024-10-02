@@ -49,11 +49,23 @@ jobs:
         make clean
         make CC=${{ matrix.compiler }}
 
+    - name: Package Binaries
+      run: |
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          tar -czvf StockManager-linux.tar.gz ./StockManager
+        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+          tar -czvf StockManager-macos.tar.gz ./StockManager
+        elif [ "${{ matrix.os }}" == "windows-latest" ]; then
+          powershell -Command "Compress-Archive -Path .\StockManager -DestinationPath StockManager-windows.zip"
+        fi
+
     - name: Upload binaries as artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Binaries-${{ matrix.os }}-${{ matrix.compiler }}
-        path: ./StockManager
+        path: |
+          ${{ matrix.os == 'windows-latest' && 'StockManager-windows.zip' || 'StockManager-linux.tar.gz' }}
+          ${{ matrix.os == 'macos-latest' && 'StockManager-macos.tar.gz' || '' }}
 
   release:
     runs-on: ubuntu-latest
@@ -77,6 +89,6 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StockManager
-        asset_name: StockManager
+        asset_path: ${{ needs.build.outputs.binaries }}
+        asset_name: StockManager-${{ matrix.os }}.zip
         asset_content_type: application/octet-stream
