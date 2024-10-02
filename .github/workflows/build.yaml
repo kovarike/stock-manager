@@ -18,28 +18,35 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+
+    - name: Debug Information
+      run: |
+        echo "Current Directory: $(pwd)"
+        echo "Available Files:"
+        ls -la
 
     - name: Set up build environment (Linux/Mac)
       if: runner.os != 'Windows'
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
           sudo apt-get update
-          sudo apt-get install -y build-essential libsqlite3-dev uuid-dev
+          sudo apt-get install -y build-essential libsqlite3-dev uuid-dev clang
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew install sqlite3 ossp-uuid
+          brew install sqlite3 ossp-luuid
         fi
 
         if [ "${{ matrix.compiler }}" == "clang" ]; then
+          brew install -y clang
           sudo apt-get install -y clang
         fi
 
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
       run: |
-        choco install mingw -y
-        curl -O https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip
-        powershell -Command "Expand-Archive -Path sqlite-dll-win32-x86-3390500.zip -DestinationPath C:\usr\local\lib"
+        choco install mingw -y --yes
+        powershell -Command "Invoke-WebRequest -Uri 'https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip' -OutFile 'sqlite-dll-win32-x86-3390500.zip'"
+        powershell -Command "Expand-Archive -Path 'sqlite-dll-win32-x86-3390500.zip' -DestinationPath 'C:\usr\local\lib'"
 
     - name: Build with ${{ matrix.compiler }}
       run: |
@@ -58,7 +65,7 @@ jobs:
     needs: build
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Create GitHub Release
       id: create_release
@@ -79,4 +86,4 @@ jobs:
         asset_name: StockManager
         asset_content_type: application/octet-stream
 
-    # Adicione aqui os uploads dos instaladores gerados se necessário.
+
