@@ -38,7 +38,7 @@ jobs:
         fi
 
     - name: Set up build environment (Windows)
-      if: runner.os == 'Windows'
+      if:  ${{ runner.os != 'Windows' }}
       run: |
         choco install mingw  # Instala gcc no Windows com Chocolatey
 
