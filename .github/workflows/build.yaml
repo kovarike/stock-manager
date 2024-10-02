@@ -23,13 +23,15 @@ jobs:
     - name: Set up build environment (Linux/Mac)
       if: runner.os != 'Windows'
       run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libsqlite3-dev uuid-dev
-        if [ "${{ matrix.os }}" == "macos-latest" ]; then
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          sudo apt-get update
+          sudo apt-get install -y build-essential libsqlite3-dev uuid-dev
+        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
           brew install sqlite3 ossp-uuid
         fi
+
         if [ "${{ matrix.compiler }}" == "clang" ]; then
-          sudo apt-get install clang
+          sudo apt-get install -y clang
         fi
 
     - name: Set up build environment (Windows)
