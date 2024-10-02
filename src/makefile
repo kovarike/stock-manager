@@ -1,38 +1,34 @@
-# Definindo o compilador
-CC = gcc
+# Definindo o compilador (pode ser sobrescrito por uma variável externa)
+CC ?= gcc
 
 # Flags de compilação
 CFLAGS = -Wall -g
 
+# Flags de link
+LDFLAGS = -lsqlite3 -luuid
+
 # Arquivos fonte e o arquivo de saída
-SOURCES = app.c lib/sh.c lib/command.c client/manage.c
-OBJECTS = lib/sh.o lib/command.o client/manage.o app.o
-EXECUTABLE = app.exe
+SOURCES = app.c lib/sh.c lib/command.c client/manage.c lib/db.c lib/login.c lib/print.c
+OBJECTS = $(SOURCES:.c=.o)
+EXECUTABLE = StockManager
 
 # Regra principal: compilar e linkar tudo
-all: $(EXECUTABLE)
+all: $(EXECUTABLE) clean_objects
 
-# Regra para compilar o arquivo objeto
-app.o: app.c util/global.h util/sh.h
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-lib/sh.o: lib/sh.c util/command.h util/sh.h util/global.h
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-lib/command.o: lib/command.c util/command.h util/global.h
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-client/manage.o: client/manage.c util/command.h util/global.h
+# Regra para compilar os arquivos objeto
+%.o: %.c util/command.h util/sh.h util/global.h util/db.h util/login.h util/print.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Compilando o executável
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE) $(LDFLAGS)
 
-# Limpeza dos arquivos .o e do executável
+# Limpeza dos arquivos .o
+clean_objects:
+	rm -f $(OBJECTS)
+
+# Limpeza do executável
 clean:
-	rm -f $(EXECUTABLE) $(OBJECTS)
+	rm -f $(EXECUTABLE)
 
-.PHONY: all clean
-
-
+.PHONY: all clean clean_objects
