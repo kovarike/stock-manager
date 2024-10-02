@@ -37,7 +37,6 @@ jobs:
         fi
 
         if [ "${{ matrix.compiler }}" == "clang" ]; then
-          brew install -y clang
           sudo apt-get install -y clang
         fi
 
