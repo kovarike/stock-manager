@@ -20,11 +20,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Debug Information
-      run: |
-        echo "Current Directory: $(pwd)"
-        echo "Available Files:"
-        ls -la
 
     - name: Set up build environment (Linux/Mac)
       if: runner.os != 'Windows'
