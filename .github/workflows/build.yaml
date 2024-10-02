@@ -26,21 +26,26 @@ jobs:
         path: |
           build/
           ~/.cache
-        key: ${{ runner.os }}-build-${{ hashFiles('**/Makefile') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/makefile') }}
 
     - name: Set up build environment (Linux/Mac)
       if: runner.os != 'Windows'
       run: |
         sudo apt-get update
-        sudo apt-get install build-essential  # Instala gcc e make no Linux
+        sudo apt-get install -y build-essential libsqlite3-dev uuid-dev  # Instala gcc, sqlite3, uuid no Linux
+        if [ "${{ matrix.os }}" == "macos-latest" ]; then
+          brew install sqlite3 ossp-uuid  # Instala sqlite3 e uuid no macOS via brew
+        fi
         if [ "${{ matrix.compiler }}" == "clang" ]; then
           sudo apt-get install clang
         fi
 
     - name: Set up build environment (Windows)
-      if:  ${{ runner.os != 'Windows' }}
+      if: runner.os == 'Windows'
       run: |
         choco install mingw  # Instala gcc no Windows com Chocolatey
+        curl -O https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip  # Baixa o SQLite para Windows
+        tar -xf sqlite-dll-win32-x86-3390500.zip -C /usr/local/lib  # Extrai e adiciona ao ambiente
 
     - name: Build with ${{ matrix.compiler }}
       run: |
@@ -52,7 +57,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Binaries-${{ matrix.os }}-${{ matrix.compiler }}
-        path: ./src/StockManager  # Caminho correto para o binário
+        path: ./StockManager  # Caminho correto para o binário
 
   build-linux:
     runs-on: ubuntu-latest
@@ -65,24 +70,11 @@ jobs:
       run: |
         make  # Compila o binário no Linux
 
-    - name: Create installer (Linux)
-      run: |
-        sudo apt-get install dpkg-dev  # Instala ferramentas para criar pacotes .deb
-        mkdir -p mypackage/DEBIAN
-        echo "Package: stockmanager" > mypackage/DEBIAN/control
-        echo "Version: 1.0" >> mypackage/DEBIAN/control
-        echo "Architecture: amd64" >> mypackage/DEBIAN/control
-        echo "Maintainer: Your Name <you@example.com>" >> mypackage/DEBIAN/control
-        echo "Description: A simple stock management system." >> mypackage/DEBIAN/control
-        mkdir -p mypackage/usr/local/bin
-        cp ./src/StockManager mypackage/usr/local/bin/
-        dpkg-deb --build mypackage
-
     - name: Upload .deb to GitHub
       uses: actions/upload-artifact@v3
       with:
         name: Linux Installers
-        path: mypackage.deb
+        path: ./StockManager.deb
 
   build-windows:
     runs-on: windows-latest
@@ -95,9 +87,8 @@ jobs:
       run: |
         cd src
         choco install nsis -y  # Instala NSIS para criar o instalador .exe
-        if (-Not (Test-Path "C:\Program Files (x86)\NSIS\makensis.exe")) {
-          choco install nsis -y  # Instala NSIS para criar o instalador .exe
-        }
+        curl -O https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip  # Baixa o SQLite para Windows
+        tar -xf sqlite-dll-win32-x86-3390500.zip -C /usr/local/lib  # Extrai e adiciona ao ambiente
         make  # Compila o binário no Windows
         makensis installer_script.nsi
 
@@ -117,6 +108,7 @@ jobs:
     - name: Build and package for macOS
       run: |
         cd src
+        brew install sqlite3 ossp-uuid  # Instala SQLite e UUID no macOS
         make  # Compila o binário no macOS
         pkgbuild --root ./StockManager --identifier com.example.stockmanager --version 1.0 --install-location /Applications ./StockManager.pkg
         hdiutil create -volname "StockManager" -srcfolder ./StockManager -ov -format UDZO StockManager.dmg
@@ -126,8 +118,8 @@ jobs:
       with:
         name: MacOS Installers
         path: |
-          StockManager.dmg
-          StockManager.pkg
+          ./StockManager.dmg
+          ./StockManager.pkg
 
   release:
     runs-on: ubuntu-latest
@@ -151,7 +143,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./src/StockManager  # Substitua pelo caminho dos seus binários
+        asset_path: ./StockManager  # Substitua pelo caminho dos seus binários
         asset_name: StockManager  # Nome do binário
         asset_content_type: application/octet-stream
 
@@ -160,7 +152,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: mypackage.deb
+        asset_path: ./StockManager.deb
         asset_name: Linux Installer (.deb)
         asset_content_type: application/octet-stream
         
@@ -168,7 +160,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: StockManager.exe
+        asset_path: ./StockManager.exe
         asset_name: Windows Installer (.exe)
         asset_content_type: application/octet-stream
         
@@ -176,6 +168,6 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: StockManager.dmg
+        asset_path: ./StockManager.dmg
         asset_name: macOS Installer (.dmg)
         asset_content_type: application/octet-stream
