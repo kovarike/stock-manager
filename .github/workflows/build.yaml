@@ -26,7 +26,7 @@ jobs:
         path: |
           build/
           ~/.cache
-        key: ${{ runner.os }}-build-${{ hashFiles('**/makefile') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/src/makefile') }}
 
     - name: Set up build environment (Linux/Mac)
       if: runner.os != 'Windows'

@@ -1,5 +1,5 @@
 #ifndef SH_H
-#define Sh_H
+#define SH_H
 
 #include <stdio.h>
 #include <stdlib.h>
