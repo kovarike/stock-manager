@@ -100,7 +100,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Windows Installer
-        path: *.exe
+        path: ./StockManager.exe
 
   build-macos:
     runs-on: macos-latest
