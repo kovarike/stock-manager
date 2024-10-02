@@ -9,34 +9,24 @@ on:
       - main
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]  # Compila em múltiplos SOs
-        compiler: [gcc, clang]  # Testa com diferentes compiladores
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        compiler: [gcc, clang]
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          build/
-          ~/.cache
-        key: ${{ runner.os }}-build-${{ hashFiles('**/src') }}
-
     - name: Set up build environment (Linux/Mac)
       if: runner.os != 'Windows'
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential libsqlite3-dev uuid-dev  # Instala gcc, sqlite3, uuid no Linux
+        sudo apt-get install -y build-essential libsqlite3-dev uuid-dev
         if [ "${{ matrix.os }}" == "macos-latest" ]; then
-          xcode-select --install
-
-          brew install sqlite3 ossp-uuid  # Instala sqlite3 e uuid no macOS via brew
+          brew install sqlite3 ossp-uuid
         fi
         if [ "${{ matrix.compiler }}" == "clang" ]; then
           sudo apt-get install clang
@@ -45,91 +35,25 @@ jobs:
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
       run: |
-        choco install mingw  # Instala gcc no Windows com Chocolatey
-        curl -O https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip  # Baixa o SQLite para Windows
-        tar -xf sqlite-dll-win32-x86-3390500.zip -C /usr/local/lib  # Extrai e adiciona ao ambiente
+        choco install mingw -y
+        curl -O https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip
+        powershell -Command "Expand-Archive -Path sqlite-dll-win32-x86-3390500.zip -DestinationPath C:\usr\local\lib"
 
     - name: Build with ${{ matrix.compiler }}
       run: |
         cd src
         make clean
-        make CC=${{ matrix.compiler }}  # Substitui o compilador baseado na matriz
+        make CC=${{ matrix.compiler }}
 
     - name: Upload binaries as artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Binaries-${{ matrix.os }}-${{ matrix.compiler }}
-        path: ./StockManager  # Caminho correto para o binário
-
-  build-linux:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Build binary
-      run: |
-        make  # Compila o binário no Linux
-
-    - name: Upload .deb to GitHub
-      uses: actions/upload-artifact@v3
-      with:
-        name: Linux Installers
-        path: ./StockManager.deb
-
-  build-windows:
-    runs-on: windows-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Build and package for Windows
-      run: |
-        cd src
-        choco install mingw -y  # Instala gcc no Windows com Chocolatey
-        curl -O https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip  # Baixa o SQLite para Windows
-        powershell -Command "Expand-Archive -Path sqlite-dll-win32-x86-3390500.zip -DestinationPath C:\usr\local\lib"  # Extraindo o arquivo ZIP
-        make  # Compila o binário no Windows
-        if exist installer_script.nsi (
-          makensis installer_script.nsi  # Certifique-se de que o script está presente
-        ) else (
-          echo "installer_script.nsi não encontrado"
-        )
-
-    - name: Upload .exe to GitHub
-      uses: actions/upload-artifact@v3
-      with:
-        name: Windows Installer
-        path: ./StockManager.exe
-
-  build-macos:
-    runs-on: macos-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Build and package for macOS
-      run: |
-        cd src
-        brew install sqlite3 ossp-uuid  # Instala SQLite e UUID no macOS
-        make  # Compila o binário no macOS
-        pkgbuild --root ./StockManager --identifier com.example.stockmanager --version 1.0 --install-location /Applications ./StockManager.pkg
-        hdiutil create -volname "StockManager" -srcfolder ./StockManager -ov -format UDZO StockManager.dmg
-
-    - name: Upload .dmg/.pkg to GitHub
-      uses: actions/upload-artifact@v3
-      with:
-        name: MacOS Installers
-        path: |
-          ./StockManager.dmg
-          ./StockManager.pkg
+        path: ./StockManager
 
   release:
     runs-on: ubuntu-latest
-    needs: [build-linux, build-windows, build-macos]  # O job de release depende dos builds
+    needs: build
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -138,9 +62,9 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token para criar release
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.0  # Defina a tag como quiser
+        tag_name: v1.0.0
         release_name: "Release v1.0.0"
         draft: false
         prerelease: false
@@ -149,31 +73,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StockManager  # Substitua pelo caminho dos seus binários
-        asset_name: StockManager  # Nome do binário
+        asset_path: ./StockManager
+        asset_name: StockManager
         asset_content_type: application/octet-stream
 
-    # Faz upload dos instaladores gerados
-    - name: Upload Linux Installer to Release
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StockManager.deb
-        asset_name: Linux Installer (.deb)
-        asset_content_type: application/octet-stream
-        
-    - name: Upload Windows Installer to Release
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StockManager.exe
-        asset_name: Windows Installer (.exe)
-        asset_content_type: application/octet-stream
-        
-    - name: Upload macOS Installer to Release
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StockManager.dmg
-        asset_name: macOS Installer (.dmg)
-        asset_content_type: application/octet-stream
+    # Adicione aqui os uploads dos instaladores gerados se necessário.
