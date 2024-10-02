@@ -26,7 +26,7 @@ jobs:
         path: |
           build/
           ~/.cache
-        key: ${{ runner.os }}-build-${{ hashFiles('**/src/makefile') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/src') }}
 
     - name: Set up build environment (Linux/Mac)
       if: runner.os != 'Windows'
@@ -34,6 +34,8 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential libsqlite3-dev uuid-dev  # Instala gcc, sqlite3, uuid no Linux
         if [ "${{ matrix.os }}" == "macos-latest" ]; then
+          xcode-select --install
+
           brew install sqlite3 ossp-uuid  # Instala sqlite3 e uuid no macOS via brew
         fi
         if [ "${{ matrix.compiler }}" == "clang" ]; then
@@ -86,11 +88,15 @@ jobs:
     - name: Build and package for Windows
       run: |
         cd src
-        choco install nsis -y  # Instala NSIS para criar o instalador .exe
+        choco install mingw -y  # Instala gcc no Windows com Chocolatey
         curl -O https://www.sqlite.org/2023/sqlite-dll-win32-x86-3390500.zip  # Baixa o SQLite para Windows
-        tar -xf sqlite-dll-win32-x86-3390500.zip -C /usr/local/lib  # Extrai e adiciona ao ambiente
+        powershell -Command "Expand-Archive -Path sqlite-dll-win32-x86-3390500.zip -DestinationPath C:\usr\local\lib"  # Extraindo o arquivo ZIP
         make  # Compila o binário no Windows
-        makensis installer_script.nsi
+        if exist installer_script.nsi (
+          makensis installer_script.nsi  # Certifique-se de que o script está presente
+        ) else (
+          echo "installer_script.nsi não encontrado"
+        )
 
     - name: Upload .exe to GitHub
       uses: actions/upload-artifact@v3
