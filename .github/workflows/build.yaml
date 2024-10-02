@@ -33,11 +33,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libsqlite3-dev uuid-dev clang
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew install sqlite3 ossp-luuid
-        fi
-
-        if [ "${{ matrix.compiler }}" == "clang" ]; then
-          sudo apt-get install -y clang
+          brew install sqlite3 ossp-uuid
         fi
 
     - name: Set up build environment (Windows)
@@ -84,5 +80,3 @@ jobs:
         asset_path: ./StockManager
         asset_name: StockManager
         asset_content_type: application/octet-stream
-
-
