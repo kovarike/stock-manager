@@ -13,28 +13,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
         compiler: [gcc, clang]
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Debug Information
+    - name: Set up build environment (Linux)
+      if: runner.os == 'Linux'
       run: |
-        echo "Current Directory: $(pwd)"
-        echo "Available Files:"
-        ls -la
-
-    - name: Set up build environment (Linux/Mac)
-      if: runner.os != 'Windows'
-      run: |
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          sudo apt-get update
-          sudo apt-get install -y build-essential libsqlite3-dev uuid-dev clang
-        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew install sqlite3 ossp-uuid
-        fi
+        sudo apt-get update
+        sudo apt-get install -y build-essential libsqlite3-dev uuid-dev clang
 
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
@@ -54,9 +44,6 @@ jobs:
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
           tar -czvf StockManager-linux.tar.gz ./StockManager
           echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
-        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          tar -czvf StockManager-macos.tar.gz ./StockManager
-          echo "StockManager-macos.tar.gz" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" == "windows-latest" ]; then
           powershell -Command "Compress-Archive -Path .\StockManager.exe -DestinationPath StockManager-windows.zip"
           echo "StockManager-windows.zip" >> $GITHUB_ENV
@@ -90,6 +77,15 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ env.GITHUB_ENV }}
-        asset_name: ${{ needs.build.outputs.binaries }}
-        asset_content_type: application/octet-stream
+        asset_path: ${{ github.workspace }}/StockManager-linux.tar.gz  # Altere o caminho conforme necessário
+        asset_name: StockManager-linux.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload Windows Binary
+      if: needs.build.outputs.binaries == 'StockManager-windows.zip'
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/StockManager-windows.zip
+        asset_name: StockManager-windows.zip
+        asset_content_type: application/zip
