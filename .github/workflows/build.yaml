@@ -48,7 +48,7 @@ jobs:
         make CC=${{ matrix.compiler }}  # Substitui o compilador baseado na matriz
 
     - name: Upload binaries as artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Binaries-${{ matrix.os }}-${{ matrix.compiler }}
         path: ./src/StockManager  # Caminho correto para o binário
@@ -78,7 +78,7 @@ jobs:
         dpkg-deb --build mypackage
 
     - name: Upload .deb to GitHub
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Linux Installers
         path: mypackage.deb
@@ -97,7 +97,7 @@ jobs:
         makensis installer_script.nsi  # Gera o .exe
 
     - name: Upload .exe to GitHub
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Windows Installer
         path: ./StockManager.exe
@@ -116,7 +116,7 @@ jobs:
         hdiutil create -volname "StockManager" -srcfolder ./StockManager -ov -format UDZO StockManager.dmg
 
     - name: Upload .dmg/.pkg to GitHub
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: MacOS Installers
         path: |
