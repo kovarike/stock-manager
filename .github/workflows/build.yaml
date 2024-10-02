@@ -44,6 +44,7 @@ jobs:
 
     - name: Build with ${{ matrix.compiler }}
       run: |
+        cd src/makefile
         make clean
         make CC=${{ matrix.compiler }}  # Substitui o compilador baseado na matriz
 
@@ -92,9 +93,13 @@ jobs:
 
     - name: Build and package for Windows
       run: |
+        cd src/makefile
         choco install nsis -y  # Instala NSIS para criar o instalador .exe
         make  # Compila o binário no Windows
-        makensis installer_script.nsi  # Gera o .exe
+        if not exist "C:\Program Files (x86)\NSIS\makensis.exe" (
+        choco install nsis -y
+        )
+        makensis installer_script.nsi
 
     - name: Upload .exe to GitHub
       uses: actions/upload-artifact@v3
@@ -111,6 +116,7 @@ jobs:
 
     - name: Build and package for macOS
       run: |
+        cd src/makefile
         make  # Compila o binário no macOS
         pkgbuild --root ./StockManager --identifier com.example.stockmanager --version 1.0 --install-location /Applications ./StockManager.pkg
         hdiutil create -volname "StockManager" -srcfolder ./StockManager -ov -format UDZO StockManager.dmg
