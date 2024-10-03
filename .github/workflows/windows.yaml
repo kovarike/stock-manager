@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  deployments: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -16,7 +20,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up build environment (Windows)
+      - name: Install dependencies using Chocolatey
+        run: |
+          choco install gcc
+          choco install make
+          choco install sqlite
+          choco install boost
+
+      - name: Set up vcpkg and install dependencies
         run: |
           git clone https://github.com/microsoft/vcpkg.git
           cd vcpkg
@@ -30,7 +41,7 @@ jobs:
         run: |
           cd src
           make clean
-          make CC=gcc CFLAGS="-I${{ env.VCPKG_ROOT }}/installed/x64-windows/include" LDFLAGS="-L${{ env.VCPKG_ROOT }}/installed/x64-windows/lib lsqlite3" 
+          make CC=gcc CFLAGS="-I${{ env.VCPKG_ROOT }}/installed/x64-windows/include" LDFLAGS="-L${{ env.VCPKG_ROOT }}/installed/x64-windows/lib -lsqlite3 -lboost_system"
 
       - name: Package Binaries
         run: |
