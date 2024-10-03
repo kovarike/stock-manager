@@ -42,22 +42,22 @@ jobs:
     - name: Package Binaries
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-      if [ -f ./src/StockManager ]; then
-        tar -czvf StockManager-linux.tar.gz ./src/StockManager
-        echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
-      else
-        echo "StockManager binary not found!" >&2
+        if [ -f ./src/StockManager ]; then
+          tar -czvf StockManager-linux.tar.gz ./src/StockManager
+          echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
+        else
+          echo "StockManager binary not found!" >&2
         exit 1
-      fi
-    elif [ "${{ matrix.os }}" == "windows-latest" ]; then
-      if [ -f ./src/StockManager.exe ]; then
-        powershell -Command "Compress-Archive -Path .\src\StockManager.exe -DestinationPath StockManager-windows.zip"
-        echo "StockManager-windows.zip" >> $GITHUB_ENV
-      else
-        echo "StockManager.exe binary not found!" >&2
+        fi
+        elif [ "${{ matrix.os }}" == "windows-latest" ]; then
+        if [ -f ./src/StockManager.exe ]; then
+          powershell -Command "Compress-Archive -Path .\src\StockManager.exe -DestinationPath StockManager-windows.zip"
+          echo "StockManager-windows.zip" >> $GITHUB_ENV
+        else
+          echo "StockManager.exe binary not found!" >&2
         exit 1
-      fi
-    fi
+        fi
+        fi
 
     - name: Upload binaries as artifacts
       uses: actions/upload-artifact@v3
