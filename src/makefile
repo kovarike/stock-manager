@@ -5,7 +5,7 @@ CC ?= gcc
 # Inclui o diretório do SQLite no Windows e Linux (ajustar caminhos conforme necessário)
 CFLAGS = -Wall -g
 ifeq ($(OS),Windows_NT)
-    CFLAGS += -I"C:/Program Files/SQLite/include"
+    CFLAGS += -I"C:/ProgramData/chocolatey/lib/SQLite/tools"
 else
     CFLAGS += -I/usr/include
 endif
@@ -14,7 +14,7 @@ endif
 # Inclui a biblioteca do SQLite no Windows e Linux (ajustar caminhos conforme necessário)
 LDFLAGS = -lsqlite3 -luuid
 ifeq ($(OS),Windows_NT)
-    LDFLAGS += -L"C:/Program Files/SQLite/lib"
+    LDFLAGS += -L"C:/ProgramData/chocolatey/lib/SQLite/tools/"
 else
     LDFLAGS += -L/usr/lib
 endif
