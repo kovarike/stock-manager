@@ -33,13 +33,14 @@ jobs:
         git clone https://github.com/microsoft/vcpkg.git
         cd vcpkg
         .\bootstrap-vcpkg.bat
+        ./vcpkg integrate install
         cd ..
 
         # Instalar as bibliotecas usando o vcpkg
         .\vcpkg\vcpkg install sqlite3 boost-uuid
 
-        # Opcional: Adicionar vcpkg ao PATH
-        echo "::add-path::$(pwd)/vcpkg"  # Adiciona o diretório do vcpkg ao PATH
+        # Adicionar vcpkg ao PATH
+        echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
     - name: Build with ${{ matrix.compiler }}
       run: |
