@@ -2,7 +2,7 @@
 CC ?= gcc
 
 # Diretório do vcpkg
-VCPKG_PATH = D:/vcpkg
+VCPKG_PATH = $(VCPKG_ROOT)
 
 # Flags de compilação
 CFLAGS = -Wall -g
