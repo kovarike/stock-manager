@@ -35,7 +35,7 @@ jobs:
       - name: Package Binaries
         run: |
           # Verifica se o binário foi criado e empacota
-          if [ -f ./src/StockManager ]; then
+          if [ -f ./StockManager ]; then
             cd src  # Certifique-se de estar no diretório correto
             tar -czvf StockManager-linux.tar.gz StockManager
             echo "STOCKMANAGER_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Binaries-linux-gcc
-          path: ${{ env.STOCKMANAGER_PACKAGE }}
+          path: src/StockManager-linux.tar.gz
 
   release:
     runs-on: ubuntu-latest
@@ -72,6 +72,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: src/StockManager-linux.tar.gz  # Ajuste para o caminho correto
+          asset_path: StockManager-linux.tar.gz  # Verifique se esse caminho é correto
           asset_name: StockManager-linux.tar.gz
           asset_content_type: application/gzip
