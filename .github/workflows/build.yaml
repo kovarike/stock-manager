@@ -42,28 +42,28 @@ jobs:
     - name: Package Binaries
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-        if [ -f ./src/StockManager ]; then
-          tar -czvf StockManager-linux.tar.gz ./src/StockManager
-          echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
-        else
-          echo "StockManager binary not found!" >&2
-        exit 1
-        fi
+          if [ -f ./src/StockManager ]; then
+            tar -czvf StockManager-linux.tar.gz ./src/StockManager
+            echo "STOCKMANAGER_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
+          else
+            echo "StockManager binary not found!" >&2
+            exit 1
+          fi
         elif [ "${{ matrix.os }}" == "windows-latest" ]; then
-        if [ -f ./src/StockManager.exe ]; then
-          powershell -Command "Compress-Archive -Path .\src\StockManager.exe -DestinationPath StockManager-windows.zip"
-          echo "StockManager-windows.zip" >> $GITHUB_ENV
-        else
-          echo "StockManager.exe binary not found!" >&2
-        exit 1
-        fi
+          if [ -f ./src/StockManager.exe ]; then
+            powershell -Command "Compress-Archive -Path .\src\StockManager.exe -DestinationPath StockManager-windows.zip"
+            echo "STOCKMANAGER_PACKAGE=StockManager-windows.zip" >> $GITHUB_ENV
+          else
+            echo "StockManager.exe binary not found!" >&2
+            exit 1
+          fi
         fi
 
     - name: Upload binaries as artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Binaries-${{ matrix.os }}-${{ matrix.compiler }}
-        path: ${{ env.GITHUB_ENV }}
+        path: ${{ env.STOCKMANAGER_PACKAGE }}
 
   release:
     runs-on: ubuntu-latest
@@ -83,18 +83,20 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Release Assets
+    - name: Upload Linux Release Asset
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ runner.workspace }}/StockManager-linux.tar.gz
+        asset_path: StockManager-linux.tar.gz
         asset_name: StockManager-linux.tar.gz
         asset_content_type: application/gzip
 
     - name: Upload Windows Release Asset
+      if: ${{ matrix.os == 'windows-latest' }}
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ runner.workspace }}/StockManager-windows.zip
+        asset_path: StockManager-windows.zip
         asset_name: StockManager-windows.zip
         asset_content_type: application/zip
