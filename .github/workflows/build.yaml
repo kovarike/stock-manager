@@ -35,12 +35,12 @@ jobs:
 
     - name: Check SQLite headers
       run: |
-        if ($env:RUNNER_OS -eq "Windows") {
-          if (-Not (Test-Path "C:/ProgramData/chocolatey/lib/SQLite/tools/sqlite3.h")) {
-            Write-Host "sqlite3.h not found in the expected path."
+        if [ "${{ runner.os }}" == "Windows" ]; then
+          if [ ! -f "C:/ProgramData/chocolatey/lib/SQLite/tools" ]; then
+            echo "sqlite3.h not found in the expected path."
             exit 1
-          }
-        }
+          fi
+        fi
 
     - name: Build with ${{ matrix.compiler }}
       run: |
