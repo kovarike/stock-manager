@@ -5,7 +5,7 @@ CC ?= gcc
 # Inclui o diretório do SQLite no Windows e Linux (ajustar caminhos conforme necessário)
 CFLAGS = -Wall -g
 ifeq ($(OS),Windows_NT)
-    CFLAGS += -I"C:/ProgramData/chocolatey/lib/SQLite/tools/include"
+    CFLAGS += -I-I"D:/a/stock-manager/stock-manager/vcpkg/installed/x64-windows/include"
 else
     CFLAGS += -I/usr/include
 endif
@@ -14,7 +14,7 @@ endif
 # Inclui a biblioteca do SQLite no Windows e Linux (ajustar caminhos conforme necessário)
 LDFLAGS = -lsqlite3 -luuid
 ifeq ($(OS),Windows_NT)
-    LDFLAGS += -L"C:/ProgramData/chocolatey/lib/SQLite/tools/lib" -lsqlite3
+    LDFLAGS += -L"D:/a/stock-manager/stock-manager/vcpkg/installed/x64-windows/lib" -lsqlite3 
 else
     LDFLAGS += -L/usr/lib
 endif
