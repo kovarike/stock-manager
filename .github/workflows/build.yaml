@@ -29,17 +29,17 @@ jobs:
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
       run: |
-        # choco feature enable -n allowGlobalConfirmation
-        # choco install mingw -y
-        # choco install sqlite -y
-        winget install sqlite 
-        winget install mingw
+        # Instalar o vcpkg
+        git clone https://github.com/microsoft/vcpkg.git
+        cd vcpkg
+        .\bootstrap-vcpkg.bat
+        cd ..
 
-    - name: List SQLite directory
-      if: runner.os == 'Windows'
-      run: |
-        Get-ChildItem "C:/ProgramData/chocolatey/lib/SQLite/tools"
+        # Instalar as bibliotecas usando o vcpkg
+        .\vcpkg\vcpkg install sqlite3 uuid
 
+        # Opcional: Adicionar vcpkg ao PATH
+        echo "::add-path::$(pwd)/vcpkg"  # Adiciona o diretório do vcpkg ao PATH
 
     - name: Build with ${{ matrix.compiler }}
       run: |
