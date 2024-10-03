@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -29,17 +30,12 @@ jobs:
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
       run: |
-        # Instalar o vcpkg
         git clone https://github.com/microsoft/vcpkg.git
         cd vcpkg
         .\bootstrap-vcpkg.bat
         ./vcpkg integrate install
         cd ..
-
-        # Instalar as bibliotecas usando o vcpkg
         .\vcpkg\vcpkg install sqlite3 boost-uuid
-
-        # Adicionar vcpkg ao PATH
         echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
     - name: Build with ${{ matrix.compiler }}
@@ -87,7 +83,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.0
+        tag_name: v1.0.0  # Consider making this dynamic
         release_name: "Release v1.0.0"
         draft: false
         prerelease: false
