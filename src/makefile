@@ -2,10 +2,22 @@
 CC ?= gcc
 
 # Flags de compilação
+# Inclui o diretório do SQLite no Windows e Linux (ajustar caminhos conforme necessário)
 CFLAGS = -Wall -g
+ifeq ($(OS),Windows_NT)
+    CFLAGS += -I"C:/Program Files/SQLite/include"
+else
+    CFLAGS += -I/usr/include
+endif
 
 # Flags de link
+# Inclui a biblioteca do SQLite no Windows e Linux (ajustar caminhos conforme necessário)
 LDFLAGS = -lsqlite3 -luuid
+ifeq ($(OS),Windows_NT)
+    LDFLAGS += -L"C:/Program Files/SQLite/lib"
+else
+    LDFLAGS += -L/usr/lib
+endif
 
 # Arquivos fonte e o arquivo de saída
 SOURCES = app.c lib/sh.c lib/command.c client/manage.c lib/db.c lib/login.c lib/print.c
