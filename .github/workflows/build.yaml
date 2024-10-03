@@ -33,6 +33,11 @@ jobs:
         choco install mingw -y
         choco install sqlite --version 3.46.1 -y
 
+    - name: List SQLite directory
+      if: runner.os == 'Windows'
+      run: |
+        Get-ChildItem "C:/ProgramData/chocolatey/lib/SQLite/tools"
+
     - name: Check SQLite headers
       if: runner.os == 'Windows'
       shell: pwsh
@@ -41,7 +46,7 @@ jobs:
           Write-Host "sqlite3.h not found in the expected path."
           exit 1
         }
-        
+
     - name: Build with ${{ matrix.compiler }}
       run: |
         cd src
