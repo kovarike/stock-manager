@@ -29,8 +29,9 @@ jobs:
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
       run: |
+        choco feature enable -n allowGlobalConfirmation
         choco install mingw -y
-        choco install sqlite --version 3.39.5 -y  # Ajuste a versão conforme necessário
+        choco install sqlite --version 3.39.5 -y
 
     - name: Build with ${{ matrix.compiler }}
       run: |
@@ -41,12 +42,22 @@ jobs:
     - name: Package Binaries
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          tar -czvf StockManager-linux.tar.gz ./src/StockManager
-          echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
-        elif [ "${{ matrix.os }}" == "windows-latest" ]; then
-          powershell -Command "Compress-Archive -Path .\src\StockManager.exe -DestinationPath StockManager-windows.zip"
-          echo "StockManager-windows.zip" >> $GITHUB_ENV
-        fi
+      if [ -f ./src/StockManager ]; then
+        tar -czvf StockManager-linux.tar.gz ./src/StockManager
+        echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
+      else
+        echo "StockManager binary not found!" >&2
+        exit 1
+      fi
+    elif [ "${{ matrix.os }}" == "windows-latest" ]; then
+      if [ -f ./src/StockManager.exe ]; then
+        powershell -Command "Compress-Archive -Path .\src\StockManager.exe -DestinationPath StockManager-windows.zip"
+        echo "StockManager-windows.zip" >> $GITHUB_ENV
+      else
+        echo "StockManager.exe binary not found!" >&2
+        exit 1
+      fi
+    fi
 
     - name: Upload binaries as artifacts
       uses: actions/upload-artifact@v3
