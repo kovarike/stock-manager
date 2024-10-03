@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-      
+
 permissions:
   contents: write
   deployments: write
@@ -34,8 +34,10 @@ jobs:
 
       - name: Package Binaries
         run: |
+          # Verifica se o binário foi criado e empacota
           if [ -f ./src/StockManager ]; then
-            tar -czvf StockManager-linux.tar.gz -C src StockManager
+            cd src  # Certifique-se de estar no diretório correto
+            tar -czvf StockManager-linux.tar.gz StockManager
             echo "STOCKMANAGER_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
           else
             echo "StockManager binary not found!" >&2
@@ -70,6 +72,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: StockManager-linux.tar.gz
+          asset_path: src/StockManager-linux.tar.gz  # Ajuste para o caminho correto
           asset_name: StockManager-linux.tar.gz
           asset_content_type: application/gzip
