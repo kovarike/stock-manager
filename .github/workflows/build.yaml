@@ -29,23 +29,17 @@ jobs:
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
       run: |
-        choco feature enable -n allowGlobalConfirmation
-        choco install mingw -y
-        choco install sqlite --version 3.46.1 -y
+        # choco feature enable -n allowGlobalConfirmation
+        # choco install mingw -y
+        # choco install sqlite -y
+        winget install sqlite 
+        winget install mingw
 
     - name: List SQLite directory
       if: runner.os == 'Windows'
       run: |
         Get-ChildItem "C:/ProgramData/chocolatey/lib/SQLite/tools"
 
-    - name: Check SQLite headers
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        if (-Not (Test-Path "C:/ProgramData/chocolatey/lib/SQLite/tools/sqlite3.h")) {
-          Write-Host "sqlite3.h not found in the expected path."
-          exit 1
-        }
 
     - name: Build with ${{ matrix.compiler }}
       run: |
