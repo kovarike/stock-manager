@@ -29,7 +29,7 @@ jobs:
     - name: Set up build environment (Windows)
       if: runner.os == 'Windows'
       run: |
-        choco install mingw -y --yes
+        choco install mingw -y
         choco install sqlite --version 3.39.5 -y  # Ajuste a versão conforme necessário
 
     - name: Build with ${{ matrix.compiler }}
@@ -41,10 +41,10 @@ jobs:
     - name: Package Binaries
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          tar -czvf StockManager-linux.tar.gz ./StockManager
+          tar -czvf StockManager-linux.tar.gz ./src/StockManager
           echo "StockManager-linux.tar.gz" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" == "windows-latest" ]; then
-          powershell -Command "Compress-Archive -Path .\StockManager.exe -DestinationPath StockManager-windows.zip"
+          powershell -Command "Compress-Archive -Path .\src\StockManager.exe -DestinationPath StockManager-windows.zip"
           echo "StockManager-windows.zip" >> $GITHUB_ENV
         fi
 
