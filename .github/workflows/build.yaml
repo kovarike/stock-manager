@@ -36,7 +36,7 @@ jobs:
         cd ..
 
         # Instalar as bibliotecas usando o vcpkg
-        .\vcpkg\vcpkg install sqlite3 uuid
+        .\vcpkg\vcpkg install sqlite3 boost-uuid
 
         # Opcional: Adicionar vcpkg ao PATH
         echo "::add-path::$(pwd)/vcpkg"  # Adiciona o diretório do vcpkg ao PATH
