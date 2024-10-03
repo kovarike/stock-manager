@@ -33,6 +33,15 @@ jobs:
         choco install mingw -y
         choco install sqlite --version 3.46.1 -y
 
+    - name: Check SQLite headers
+      run: |
+        if [ "${{ runner.os }}" == "Windows" ]; then
+          if [ ! -f "C:/ProgramData/chocolatey/lib/SQLite/tools/sqlite3.h" ]; then
+            echo "sqlite3.h not found in the expected path."
+            exit 1
+          fi
+        fi
+
     - name: Build with ${{ matrix.compiler }}
       run: |
         cd src
@@ -98,5 +107,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: StockManager-windows.zip
-        asset_name: StockManager-windows.zip
+        asset_name: StockManager-windows.zip  
         asset_content_type: application/zip
