@@ -25,23 +25,14 @@ jobs:
           choco install gcc
           choco install make
           choco install sqlite
+          choco install uuid
           choco install boost
-
-      - name: Set up vcpkg and install dependencies
-        run: |
-          git clone https://github.com/microsoft/vcpkg.git
-          cd vcpkg
-          .\bootstrap-vcpkg.bat
-          .\vcpkg integrate install
-          cd ..
-          .\vcpkg\vcpkg install sqlite3 boost-uuid
-          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
       - name: Build with GCC
         run: |
           cd src
           make clean
-          make CC=gcc CFLAGS="-I${{ env.VCPKG_ROOT }}/installed/x64-windows/include" LDFLAGS="-L${{ env.VCPKG_ROOT }}/installed/x64-windows/lib -lsqlite3 -lboost_system"
+          make CC=gcc CFLAGS="-I/installed/x64-windows/include" LDFLAGS="-L/usr/lib -lsqlite3 -lboost_system"
 
       - name: Package Binaries
         run: |
