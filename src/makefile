@@ -2,7 +2,7 @@
 CC ?= gcc
 
 # Diretório do vcpkg
-VCPKG_PATH = D:/a/stock-manager/stock-manager/vcpkg
+VCPKG_PATH = D:/vcpkg
 
 # Flags de compilação
 CFLAGS = -Wall -g
@@ -39,7 +39,7 @@ $(EXECUTABLE): $(OBJECTS)
 # Limpeza dos arquivos .o
 clean_objects:
 ifeq ($(OS),Windows_NT)
-	del $(OBJECTS)
+	del /Q $(OBJECTS)
 else
 	rm -f $(OBJECTS)
 endif
@@ -47,7 +47,7 @@ endif
 # Limpeza do executável
 clean: clean_objects
 ifeq ($(OS),Windows_NT)
-	del $(EXECUTABLE)
+	del /Q $(EXECUTABLE)
 else
 	rm -f $(EXECUTABLE)
 endif

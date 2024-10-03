@@ -1,4 +1,4 @@
-name: Build project C for windows
+name: Build project C for Windows
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
           git clone https://github.com/microsoft/vcpkg.git
           cd vcpkg
           .\bootstrap-vcpkg.bat
-          ./vcpkg integrate install
+          .\vcpkg integrate install
           cd ..
           .\vcpkg\vcpkg install sqlite3 boost-uuid
           echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
@@ -30,7 +30,7 @@ jobs:
         run: |
           cd src
           make clean
-          make CC=gcc CFLAGS="-I${{ env.VCPKG_ROOT }}/installed/x64-windows/include"
+          make CC=gcc CFLAGS="-I${{ env.VCPKG_ROOT }}/installed/x64-windows/include" LDFLAGS="-L${{ env.VCPKG_ROOT }}/installed/x64-windows/lib" 
 
       - name: Package Binaries
         run: |
@@ -70,6 +70,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: StockManager-windows.zip
+          asset_path: ${{ env.STOCKMANAGER_PACKAGE }}
           asset_name: StockManager-windows.zip  
           asset_content_type: application/zip
