@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sqlite3.h>
 
+
 #define MAX_INPUT 1024
 #define MAX_ARGS 100
 #define MAX_PRODUTOS 5000
