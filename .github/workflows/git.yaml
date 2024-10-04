@@ -53,6 +53,7 @@ jobs:
         run: |
           echo "SQLITE_INCLUDE: $SQLITE_INCLUDE"
           echo "UUID_INCLUDE: $UUID_INCLUDE"
+          ls /usr/x86_64-w64-mingw32/include
 
       # Compilar para Linux
       - name: Build for Linux
@@ -76,7 +77,7 @@ jobs:
       - name: Build for Windows
         run: |
           cd src
-          make clean
+          # make clean
           make CC=x86_64-w64-mingw32-gcc  # Compila com MinGW para Windows
 
       - name: Package Windows Binary
