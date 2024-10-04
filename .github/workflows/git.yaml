@@ -115,7 +115,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./src/${{ env.STOCKMANAGER_LINUX_PACKAGE }}
+          asset_path: ./${{ env.STOCKMANAGER_LINUX_PACKAGE }}
           asset_name: StockManager-linux.tar.gz
           asset_content_type: application/gzip
 
@@ -123,6 +123,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./src/${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}
+          asset_path: ./${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}
           asset_name: StockManager-windows.zip
           asset_content_type: application/zip
