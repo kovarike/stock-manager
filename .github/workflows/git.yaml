@@ -36,7 +36,7 @@ jobs:
           ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
           make
           sudo make install
-          
+
       - name: Debug environment variables
         run: |
           echo "SQLITE_INCLUDE: $SQLITE_INCLUDE"
@@ -65,7 +65,7 @@ jobs:
       - name: Build for Windows
         run: |
           cd src
-          # make clean
+          make clean
           make CC=x86_64-w64-mingw32-gcc  # Compila com MinGW para Windows
 
       - name: Package Windows Binary
