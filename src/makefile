@@ -5,16 +5,18 @@ CC ?= gcc
 ifeq ($(CC),x86_64-w64-mingw32-gcc)
     SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include
     UUID_INCLUDE = /usr/x86_64-w64-mingw32/include
+	LDFLAGS = -lsqlite3 -luuid -L/usr/x86_64-w64-mingw32/lib
 else
     SQLITE_INCLUDE = /usr/include
     UUID_INCLUDE = /usr/include
+	LDFLAGS = -lsqlite3 -luuid
 endif
 
 # Flags de compilação
 CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
 
 # Flags de link
-LDFLAGS = -lsqlite3 -luuid
+
 
 # Arquivos fonte e o arquivo de saída
 SOURCES = app.c lib/sh.c lib/command.c client/manage.c lib/db.c lib/login.c lib/print.c
