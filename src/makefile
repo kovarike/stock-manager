@@ -66,7 +66,7 @@ else
 endif
 
 # Flags de compilação
-CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
+CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE) -fno-stack-protector
 
 # Arquivos fonte e o arquivo de saída
 SOURCES = app.c lib/sh.c lib/command.c client/manage.c lib/db.c lib/login.c lib/print.c
