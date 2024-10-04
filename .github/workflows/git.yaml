@@ -52,7 +52,7 @@ jobs:
       - name: Debug environment variables
         run: |
           echo "SQLITE_INCLUDE: $SQLITE_INCLUDE"
-          echo "UUID_INCLUDE: $UUID_INCLUDE
+          echo "UUID_INCLUDE: $UUID_INCLUDE"
 
       # Compilar para Linux
       - name: Build for Linux
