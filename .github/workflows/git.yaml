@@ -1,0 +1,62 @@
+name: C Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:stable-dind
+        options: --privileged
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sqlite3 libsqlite3-dev uuid-dev
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build the Docker image and compile the project
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/myproject:latest .
+          docker run --rm -v $(pwd):/src ${{ secrets.DOCKER_USERNAME }}/myproject:latest make -C src
+
+      - name: Verify binary
+        run: |
+          if [ ! -f ./src/stock_manager ]; then
+            echo "Binary not found!"
+            exit 1
+          fi
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download binary from Docker image
+        run: |
+          docker run --rm -v $(pwd):/output ${{ secrets.DOCKER_USERNAME }}/myproject:latest cp /src/StockManager /output/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: /output/StockManager
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

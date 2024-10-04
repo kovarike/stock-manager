@@ -1,18 +1,9 @@
 # Definindo o compilador (pode ser sobrescrito por uma variável externa)
 CC ?= gcc
 
-# Diretórios de instalação do SQLite e UUID
-ifeq ($(OS),Windows_NT)
-    SQLITE_INCLUDE = C:ProgramData\chocolatey\lib\SQLite\tools\include
-    SQLITE_LIB = C:ProgramData\chocolatey\lib\SQLite\tools\lib
-    UUID_INCLUDE = C:ProgramData\chocolatey\lib\uuid\tools\include
-    UUID_LIB = C:ProgramData\chocolatey\lib\uuid\tools\lib
-else
-    SQLITE_INCLUDE = /usr/include
-    SQLITE_LIB = /usr/lib
-    UUID_INCLUDE = /usr/include
-    UUID_LIB = /usr/lib
-endif
+# Diretórios de include
+SQLITE_INCLUDE = /usr/include
+UUID_INCLUDE = /usr/include
 
 # Flags de compilação
 CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
@@ -42,19 +33,11 @@ $(EXECUTABLE): $(OBJECTS)
 # Limpeza dos arquivos .o
 clean_objects:
 	@echo "Limpando arquivos objeto..."
-ifeq ($(OS),Windows_NT)
-	del /Q $(OBJECTS)
-else
 	rm -f $(OBJECTS)
-endif
 
 # Limpeza do executável
 clean: clean_objects
 	@echo "Limpando executável..."
-ifeq ($(OS),Windows_NT)
-	del /Q $(EXECUTABLE)
-else
 	rm -f $(EXECUTABLE)
-endif
 
 .PHONY: all clean clean_objects
