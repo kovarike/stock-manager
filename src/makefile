@@ -1,8 +1,8 @@
 # Definindo o compilador (pode ser sobrescrito por uma variável externa)
 CC ?= gcc
 
-# Variáveis de diretórios de inclusão
-ifeq ($(OS),Windows_NT)
+# Incluindo caminhos dependendo do sistema
+ifeq ($(CC),x86_64-w64-mingw32-gcc)
     SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include
     UUID_INCLUDE = /usr/x86_64-w64-mingw32/include
 else
@@ -21,20 +21,8 @@ SOURCES = app.c lib/sh.c lib/command.c client/manage.c lib/db.c lib/login.c lib/
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = StockManager
 
-# Detecta o sistema operacional
-UNAME_S := $(shell uname -s)
-
-ifeq ($(UNAME_S),Linux)
-    TARGET = $(EXECUTABLE)
-else ifeq ($(OS),Windows_NT)
-    TARGET = $(EXECUTABLE).exe
-    CC = x86_64-w64-mingw32-gcc
-    # Ajustar os caminhos de inclusão e link para Windows se necessário
-endif
-
-# Regra principal: compilar e linkar tudo
-all: $(TARGET)
-	@echo "Compilação completa: $(TARGET)"
+all: $(EXECUTABLE)
+	@echo "Compilação completa: $(EXECUTABLE)"
 
 # Regra para compilar os arquivos objeto
 %.o: %.c
@@ -42,9 +30,9 @@ all: $(TARGET)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Compilando o executável
-$(TARGET): $(OBJECTS)
+$(EXECUTABLE): $(OBJECTS)
 	@echo "Linkando $@ ..."
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
 
 # Limpeza dos arquivos .o
 clean_objects:
@@ -54,6 +42,6 @@ clean_objects:
 # Limpeza do executável
 clean: clean_objects
 	@echo "Limpando executável..."
-	rm -f $(TARGET)
+	rm -f $(EXECUTABLE)
 
 .PHONY: all clean clean_objects
