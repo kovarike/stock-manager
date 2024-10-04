@@ -1,4 +1,4 @@
-# Definindo o compilador (pode ser sobrescrito por uma variável externa) 
+# Definindo o compilador (pode ser sobrescrito por uma variável externa)
 CC ?= gcc
 
 # Variáveis de diretórios de inclusão
@@ -26,6 +26,10 @@ else ifeq ($(OS),Windows_NT)
     TARGET = $(EXECUTABLE).exe
     EXT = .exe
     CC = x86_64-w64-mingw32-gcc
+    # Ajustar os caminhos de inclusão e link para Windows
+    SQLITE_INCLUDE = /usr/include/sqlite3
+    UUID_INCLUDE = /usr/include/uuid
+    LDFLAGS = -lsqlite3 -luuid  # Links para as bibliotecas
 endif
 
 # Regra principal: compilar e linkar tudo
