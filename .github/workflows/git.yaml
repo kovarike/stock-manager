@@ -25,9 +25,20 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential sqlite3 libsqlite3-dev uuid-dev mingw-w64 
-          sudo apt-get install -y mingw-w64-x86-64-dev mingw-w64-x86-64-sqlite3
+          sudo apt-get install -y mingw-w64-x86-64-dev 
           echo "SQLITE_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
           echo "UUID_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
+
+      - name: Download and build SQLite for Windows
+        run: |
+          cd /tmp
+          wget https://www.sqlite.org/2024/sqlite-autoconf-3460100.tar.gz  
+          tar -xzf sqlite-autoconf-3460100.tar.gz
+          cd sqlite-autoconf-3460100
+          ./configure --host=x86_64-w64-mingw32
+          make
+          sudo make install
+
       # Compilar para Linux
       - name: Build for Linux
         run: |
