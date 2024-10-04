@@ -24,8 +24,8 @@ jobs:
       - name: Set up build environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential sqlite3 libsqlite3-dev uuid-dev mingw-w64 
-          sudo apt-get install -y mingw-w64-x86-64-dev 
+          sudo apt-get install -y cmake build-essential sqlite3 libsqlite3-dev uuid-dev uuid-dev mingw-w64 
+          sudo apt-get install -y mingw-w64-x86-64-dev uuid-dev
           sudo mkdir -p /usr/x86_64-w64-mingw32/include
 
           # Copiar o arquivo de cabeçalho
@@ -49,6 +49,10 @@ jobs:
           ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
           make
           sudo make install
+      - name: Debug environment variables
+        run: |
+          echo "SQLITE_INCLUDE: $SQLITE_INCLUDE"
+          echo "UUID_INCLUDE: $UUID_INCLUDE
 
       # Compilar para Linux
       - name: Build for Linux
