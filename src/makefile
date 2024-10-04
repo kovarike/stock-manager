@@ -49,46 +49,30 @@
 # .PHONY: all clean clean_objects
 
 
-# Definindo o compilador (pode ser sobrescrito por uma variável externa)
+# Definindo o compilador
 CC ?= gcc
 
-# Incluindo caminhos dependendo do sistema
-ifeq ($(CC),x86_64-w64-mingw32-gcc)
-    SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include
-    UUID_INCLUDE = /usr/x86_64-w64-mingw32/include/uuid
-    LDFLAGS = -lsqlite3 -luuid
-    EXECUTABLE = StockManager.exe  # Para Windows
-else
-    SQLITE_INCLUDE = /usr/include
-    UUID_INCLUDE = /usr/include/uuid
-    LDFLAGS = -lsqlite3 -luuid
-    EXECUTABLE = StockManager  # Para Linux
-endif
+# Incluir diretórios
+SQLITE_INCLUDE = /usr/include
+UUID_INCLUDE = /usr/include/uuid
+LDFLAGS = -lsqlite3 -luuid
 
 # Flags de compilação
-CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE) -fno-stack-protector
+CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
 
 # Arquivos fonte e o arquivo de saída
 SOURCES = app.c lib/sh.c lib/command.c client/manage.c lib/db.c lib/login.c lib/print.c
 OBJECTS = $(SOURCES:.c=.o)
+EXECUTABLE = StockManager
 
 all: $(EXECUTABLE)
-	@echo "Compilação completa: $(EXECUTABLE)"
-
-# Regra para compilar os arquivos objeto
-%.o: %.c
-	@echo "Compilando $< ..."
-	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Compilando o executável
 $(EXECUTABLE): $(OBJECTS)
-	@echo "Linkando $@ ..."
 	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
 
 # Regras de limpeza
 clean:
-	@echo "Limpando arquivos objeto e executável..."
 	rm -f $(OBJECTS) $(EXECUTABLE)
 
 .PHONY: all clean
-
