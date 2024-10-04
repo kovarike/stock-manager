@@ -26,6 +26,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 make sqlite3 libsqlite3-dev uuid-dev
 
+      - name: Download and build SQLite for Windows
+        run: |
+          cd /tmp
+          wget https://www.sqlite.org/2024/sqlite-autoconf-3460100.tar.gz  
+          tar -xzf sqlite-autoconf-3460100.tar.gz
+          cd sqlite-autoconf-3460100
+          ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
+          make
+          sudo make install
+
       - name: Build with GCC for Windows
         run: |
           cd src
@@ -71,6 +81,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.STOCKMANAGER_PACKAGE }}
+          asset_path: ./${{ env.STOCKMANAGER_PACKAGE }}
           asset_name: StockManager-windows.zip  
           asset_content_type: application/zip

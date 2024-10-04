@@ -52,18 +52,11 @@
 # Definindo o compilador
 CC ?= gcc
 
+# Incluir diretórios
+SQLITE_INCLUDE = /usr/include
+UUID_INCLUDE = /usr/include/uuid
+LDFLAGS = -lsqlite3 -luuid
 
-ifeq ($(CC),x86_64-w64-mingw32-gcc)
-    SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include
-    UUID_INCLUDE = /usr/include/uuid
-    LDFLAGS = -lsqlite3 -luuid
-    EXECUTABLE = StockManager.exe  # Para Windows
-else
-    SQLITE_INCLUDE = /usr/include
-    UUID_INCLUDE = /usr/include
-    LDFLAGS = -lsqlite3 -luuid
-    EXECUTABLE = StockManager  # Para Linux
-endif
 
 # Flags de compilação
 CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
