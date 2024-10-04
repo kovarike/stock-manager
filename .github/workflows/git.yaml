@@ -39,6 +39,15 @@ jobs:
           make
           sudo make install
 
+          # Baixar e instalar uuid
+          git clone https://github.com/uuid/uuid.git
+          cd uuid
+          mkdir build
+          cd build
+          cmake ..
+          make
+          make install DESTDIR=/usr/x86_64-w64-mingw32
+
       # Compilar para Linux
       - name: Build for Linux
         run: |
