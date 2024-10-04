@@ -37,6 +37,8 @@ jobs:
           
           echo "SQLITE_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
           echo "UUID_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
+          dpkg -l | grep uuid-dev
+
 
       - name: Download and build SQLite for Windows
         run: |
