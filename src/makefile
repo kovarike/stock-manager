@@ -1,6 +1,10 @@
 # Definindo o compilador (pode ser sobrescrito por uma variável externa) 
 CC ?= gcc
 
+# Variáveis de diretórios de inclusão
+SQLITE_INCLUDE = /usr/include  # Caminho para SQLite
+UUID_INCLUDE = /usr/include    # Caminho para UUID
+
 # Flags de compilação
 CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
 
@@ -22,7 +26,6 @@ else ifeq ($(OS),Windows_NT)
     TARGET = $(EXECUTABLE).exe
     EXT = .exe
     CC = x86_64-w64-mingw32-gcc
-    LDFLAGS += -lws2_32 # Adicione se precisar de suporte a sockets em Windows
 endif
 
 # Regra principal: compilar e linkar tudo

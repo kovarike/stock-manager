@@ -25,6 +25,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential libsqlite3-dev uuid-dev mingw-w64  # Instala MinGW para compilar para Windows
+          echo "SQLITE_INCLUDE=/usr/include" >> $GITHUB_ENV
+          echo "UUID_INCLUDE=/usr/include" >> $GITHUB_ENV  # Adicione o caminho correto se necessário
 
       # Compilar para Linux
       - name: Build for Linux
