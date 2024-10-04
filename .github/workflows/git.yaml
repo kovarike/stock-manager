@@ -35,7 +35,7 @@ jobs:
           wget https://www.sqlite.org/2024/sqlite-autoconf-3460100.tar.gz  
           tar -xzf sqlite-autoconf-3460100.tar.gz
           cd sqlite-autoconf-3460100
-          ./configure --host=x86_64-w64-mingw32
+          ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
           make
           sudo make install
 
