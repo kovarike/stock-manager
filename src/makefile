@@ -4,8 +4,8 @@ CC ?= gcc
 # Incluindo caminhos dependendo do sistema
 ifeq ($(CC),x86_64-w64-mingw32-gcc)
     SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include
-	UUID_INCLUDE = /usr/include
     # UUID_INCLUDE = /usr/x86_64-w64-mingw32/include
+	UUID_INCLUDE = /usr/include
 	LDFLAGS = -lsqlite3 -luuid 
 else
     SQLITE_INCLUDE = /usr/include

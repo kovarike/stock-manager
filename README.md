@@ -45,3 +45,5 @@ Este comando copia o conteúdo do diretório ``` /src/App_StockManager ``` do co
 ## License
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for more details.
+
+<!-- https://github.com/torvalds/linux/blob/master/lib/uuid.c -->

@@ -24,7 +24,7 @@ jobs:
       - name: Set up build environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential sqlite3 libsqlite3-dev uuid-dev mingw-w64 
+          sudo apt-get install -y cmake build-essential sqlite3 libsqlite3-dev uuid-dev mingw-w64 
           sudo apt-get install -y mingw-w64-x86-64-dev 
           echo "SQLITE_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
           echo "UUID_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
@@ -38,15 +38,6 @@ jobs:
           ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
           make
           sudo make install
-
-          # # Baixar e instalar uuid
-          # git clone https://github.com/uuid/uuid.git
-          # cd uuid
-          # mkdir build
-          # cd build
-          # cmake ..
-          # make
-          # make install DESTDIR=/usr/x86_64-w64-mingw32
 
       # Compilar para Linux
       - name: Build for Linux
