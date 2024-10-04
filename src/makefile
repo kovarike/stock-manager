@@ -53,25 +53,26 @@
 CC ?= gcc
 
 ifeq ($(CC),x86_64-w64-mingw32-gcc)
-    SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include
-    UUID_INCLUDE = /usr/x86_64-w64-mingw32/include  # Verifique se este é o caminho correto
+    # SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include/
+    # # UUID_INCLUDE = /usr/include/uuid/uuid.h
+	
     LDFLAGS = -lsqlite3 -luuid
     EXECUTABLE = StockManager.exe
 else
-    SQLITE_INCLUDE = /usr/include
-    UUID_INCLUDE = /usr/include
+    # SQLITE_INCLUDE = /usr/include
+    # UUID_INCLUDE = /usr/include
     LDFLAGS = -lsqlite3 -luuid
     EXECUTABLE = StockManager
 endif
 
-
+# /usr/include/linux/uuid.h  # Verifique se este é o caminho correto
 # Flags de compilação
 CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
 
 # Arquivos fonte e o arquivo de saída
 SOURCES = app.c lib/sh.c lib/command.c client/manage.c lib/db.c lib/login.c lib/print.c
 OBJECTS = $(SOURCES:.c=.o)
-EXECUTABLE = StockManager
+
 
 all: $(EXECUTABLE)
 
