@@ -53,14 +53,14 @@
 CC ?= gcc
 
 ifeq ($(CC),x86_64-w64-mingw32-gcc)
-    # SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include/
+    SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include/
     # # UUID_INCLUDE = /usr/include/uuid/uuid.h
 	
     LDFLAGS = -lsqlite3 -luuid
     EXECUTABLE = StockManager.exe
 else
-    # SQLITE_INCLUDE = /usr/include
-    # UUID_INCLUDE = /usr/include
+    SQLITE_INCLUDE = /usr/include
+    UUID_INCLUDE = /usr/include
     LDFLAGS = -lsqlite3 -luuid
     EXECUTABLE = StockManager
 endif
