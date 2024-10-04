@@ -81,6 +81,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ env.STOCKMANAGER_PACKAGE }}
+          asset_path: ./src${{ env.STOCKMANAGER_PACKAGE }}
           asset_name: StockManager-windows.zip  
           asset_content_type: application/zip
