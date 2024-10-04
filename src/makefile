@@ -2,8 +2,13 @@
 CC ?= gcc
 
 # Variáveis de diretórios de inclusão
-SQLITE_INCLUDE = /usr/include  # Caminho para SQLite
-UUID_INCLUDE = /usr/include    # Caminho para UUID
+ifeq ($(OS),Windows_NT)
+    SQLITE_INCLUDE = /usr/x86_64-w64-mingw32/include
+    UUID_INCLUDE = /usr/x86_64-w64-mingw32/include
+else
+    SQLITE_INCLUDE = /usr/include
+    UUID_INCLUDE = /usr/include
+endif
 
 # Flags de compilação
 CFLAGS = -Wall -g -I$(SQLITE_INCLUDE) -I$(UUID_INCLUDE)
@@ -21,15 +26,10 @@ UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Linux)
     TARGET = $(EXECUTABLE)
-    EXT =
 else ifeq ($(OS),Windows_NT)
     TARGET = $(EXECUTABLE).exe
-    EXT = .exe
     CC = x86_64-w64-mingw32-gcc
-    # Ajustar os caminhos de inclusão e link para Windows
-    SQLITE_INCLUDE = /usr/include/sqlite3
-    UUID_INCLUDE = /usr/include/uuid
-    LDFLAGS = -lsqlite3 -luuid  # Links para as bibliotecas
+    # Ajustar os caminhos de inclusão e link para Windows se necessário
 endif
 
 # Regra principal: compilar e linkar tudo

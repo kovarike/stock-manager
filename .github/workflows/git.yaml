@@ -26,9 +26,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential sqlite3 libsqlite3-dev uuid-dev mingw-w64 
           sudo apt-get install -y mingw-w64-x86-64-dev
-          echo "SQLITE_INCLUDE=/usr/include" >> $GITHUB_ENV
-          echo "UUID_INCLUDE=/usr/include" >> $GITHUB_ENV  # Adicione o caminho correto se necessário
-
+          echo "SQLITE_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
+          echo "UUID_INCLUDE=/usr/x86_64-w64-mingw32/include" >> $GITHUB_ENV
       # Compilar para Linux
       - name: Build for Linux
         run: |
