@@ -1,4 +1,4 @@
-# Definindo o compilador (pode ser sobrescrito por uma variável externa)
+# Definindo o compilador (pode ser sobrescrito por uma variável externa) 
 CC ?= gcc
 
 # Flags de compilação
@@ -22,6 +22,7 @@ else ifeq ($(OS),Windows_NT)
     TARGET = $(EXECUTABLE).exe
     EXT = .exe
     CC = x86_64-w64-mingw32-gcc
+    LDFLAGS += -lws2_32 # Adicione se precisar de suporte a sockets em Windows
 endif
 
 # Regra principal: compilar e linkar tudo
