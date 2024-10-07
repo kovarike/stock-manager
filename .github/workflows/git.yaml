@@ -24,8 +24,7 @@ jobs:
       - name: Set up build environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 make sqlite3 libsqlite3-dev uuid-dev mingw-w64 
-          sudo apt-get install -y mingw-w64-x86-64-dev uuid-dev
+          sudo apt-get install -y build-essential gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 sqlite3 libsqlite3-dev uuid-dev mingw-w64
 
       - name: Download and build SQLite for Windows
         run: |
@@ -37,43 +36,37 @@ jobs:
           make
           sudo make install
 
-      - name: Debug environment variables
-        run: |
-          echo "SQLITE_INCLUDE: $SQLITE_INCLUDE"
-          echo "UUID_INCLUDE: $UUID_INCLUDE"
-          ls /usr/x86_64-w64-mingw32/include
-
       # Compilar para Linux
       - name: Build for Linux
         run: |
           cd src
           make clean
-          make CC=gcc  # Compila com GCC para Linux
+          make CC=gcc CFLAGS="-I/usr/include" LDFLAGS="-L/usr/lib -lsqlite3"
 
       - name: Package Linux Binary
         run: |
-          if [ -f ./src/StockManager ]; then
+          if [ -f ./StockManager ]; then
             cd src
             tar -czvf StockManager-linux.tar.gz StockManager
-            echo "STOCKMANAGER_LINUX_PACKAGE=src/StockManager-linux.tar.gz" >> $GITHUB_ENV
+            echo "STOCKMANAGER_LINUX_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
           else
             echo "Linux binary not found!" >&2
             exit 1
           fi
 
-      # Compilar para Windows usando MinGW
+      # Compilar para Windows
       - name: Build for Windows
         run: |
           cd src
           make clean
-          make CC=x86_64-w64-mingw32-gcc  # Compila com MinGW para Windows
+          make CC=x86_64-w64-mingw32-gcc CFLAGS="-I/usr/x86_64-w64-mingw32/include" LDFLAGS="-L/usr/x86_64-w64-mingw32/lib -lsqlite3"
 
       - name: Package Windows Binary
         run: |
-          if [ -f ./src/StockManager.exe ]; then
+          if [ -f ./StockManager.exe ]; then
             cd src
             zip StockManager-windows.zip StockManager.exe
-            echo "STOCKMANAGER_WINDOWS_PACKAGE=src/StockManager-windows.zip" >> $GITHUB_ENV
+            echo "STOCKMANAGER_WINDOWS_PACKAGE=StockManager-windows.zip" >> $GITHUB_ENV
           else
             echo "Windows binary not found!" >&2
             exit 1
@@ -115,7 +108,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ env.STOCKMANAGER_LINUX_PACKAGE }}
+          asset_path: ./src/${{ env.STOCKMANAGER_LINUX_PACKAGE }}  # Sem ./src/
           asset_name: StockManager-linux.tar.gz
           asset_content_type: application/gzip
 
@@ -123,6 +116,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}
+          asset_path: ./src/${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}  # Sem ./src/
           asset_name: StockManager-windows.zip
           asset_content_type: application/zip

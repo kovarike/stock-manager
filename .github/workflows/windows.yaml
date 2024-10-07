@@ -40,7 +40,7 @@ jobs:
         run: |
           cd src
           make clean
-          make CC=x86_64-w64-mingw32-gcc CFLAGS="-I/usr/x86_64-w64-mingw32/include" LDFLAGS="-L/usr/x86_64-w64-mingw32/lib -lsqlite3 -luuid"
+          make CC=x86_64-w64-mingw32-gcc CFLAGS="-I/usr/x86_64-w64-mingw32/include" LDFLAGS="-L/usr/x86_64-w64-mingw32/lib -lsqlite3"
 
       - name: Package Binaries
         run: |
