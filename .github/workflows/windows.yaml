@@ -26,6 +26,7 @@ jobs:
 
       - name: Configure and Build with CMake
         run: |
+          cd src
           mkdir build
           mkdir build/app
           mkdir -p build/app/db

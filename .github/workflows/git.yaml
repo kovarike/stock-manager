@@ -25,6 +25,7 @@ jobs:
       # Compilar para Linux
       - name: Build for Linux
         run: |
+          cd src
           mkdir build
           mkdir build/linux
           mkdir build/linux/app
@@ -37,6 +38,7 @@ jobs:
       # Compilar para Windows
       - name: Build for Windows
         run: |
+          cd src
           mkdir build
           mkdir build/windows
           mkdir build/windows/app
