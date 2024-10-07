@@ -8,12 +8,8 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  deployments: write
-
 jobs:
-  build_linux_and_windows:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -24,29 +20,29 @@ jobs:
       - name: Set up build environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 sqlite3 libsqlite3-dev uuid-dev mingw-w64
-
-      - name: Download and build SQLite for Windows
-        run: |
-          cd /tmp
-          wget https://www.sqlite.org/2024/sqlite-autoconf-3460100.tar.gz  
-          tar -xzf sqlite-autoconf-3460100.tar.gz
-          cd sqlite-autoconf-3460100
-          ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
-          make
-          sudo make install
+          sudo apt-get install -y build-essential cmake mingw-w64 g++-mingw-w64-x86-64 sqlite3 libsqlite3-dev uuid-dev
 
       # Compilar para Linux
       - name: Build for Linux
         run: |
-          cd src
-          make clean
-          make CC=gcc CFLAGS="-I/usr/include" LDFLAGS="-L/usr/lib -lsqlite3"
+          mkdir -p build/linux/app/db build/linux/app/log
+          cd build/linux
+          cmake ../../
+          make
 
+      # Compilar para Windows
+      - name: Build for Windows
+        run: |
+          mkdir -p build/windows/app/db build/windows/app/log
+          cd build/windows
+          cmake -DCMAKE_TOOLCHAIN_FILE=/usr/x86_64-w64-mingw32/share/cmake/win32-mingw-toolchain.cmake ../../
+          make
+
+      # Empacotar os binários Linux
       - name: Package Linux Binary
         run: |
-          if [ -f ./StockManager ]; then
-            cd src
+          if [ -f build/linux/app/StockManager ]; then
+            cd build/linux/app
             tar -czvf StockManager-linux.tar.gz StockManager
             echo "STOCKMANAGER_LINUX_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
           else
@@ -54,17 +50,11 @@ jobs:
             exit 1
           fi
 
-      # Compilar para Windows
-      - name: Build for Windows
-        run: |
-          cd src
-          make clean
-          make CC=x86_64-w64-mingw32-gcc CFLAGS="-I/usr/x86_64-w64-mingw32/include" LDFLAGS="-L/usr/x86_64-w64-mingw32/lib -lsqlite3"
-
+      # Empacotar os binários Windows
       - name: Package Windows Binary
         run: |
-          if [ -f ./StockManager.exe ]; then
-            cd src
+          if [ -f build/windows/app/StockManager.exe ]; then
+            cd build/windows/app
             zip StockManager-windows.zip StockManager.exe
             echo "STOCKMANAGER_WINDOWS_PACKAGE=StockManager-windows.zip" >> $GITHUB_ENV
           else
@@ -87,7 +77,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: build_linux_and_windows
+    needs: build
 
     steps:
       - name: Checkout code
@@ -108,7 +98,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./src/${{ env.STOCKMANAGER_LINUX_PACKAGE }}  # Sem ./src/
+          asset_path: ${{ github.workspace }}/build/linux/${{ env.STOCKMANAGER_LINUX_PACKAGE }}
           asset_name: StockManager-linux.tar.gz
           asset_content_type: application/gzip
 
@@ -116,6 +106,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./src/${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}  # Sem ./src/
+          asset_path: ${{ github.workspace }}/build/windows/${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}
           asset_name: StockManager-windows.zip
           asset_content_type: application/zip

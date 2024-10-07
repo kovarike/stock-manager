@@ -8,13 +8,9 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  deployments: write
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 30
 
     steps:
@@ -23,64 +19,29 @@ jobs:
 
       - name: Install MinGW and dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 make sqlite3 libsqlite3-dev uuid-dev
+          choco install mingw --yes
+          choco install sqlite --yes
+          choco install make --yes
+          choco install cmake --yes
 
-      - name: Download and build SQLite for Windows
+      - name: Configure and Build with CMake
         run: |
-          cd /tmp
-          wget https://www.sqlite.org/2024/sqlite-autoconf-3460100.tar.gz  
-          tar -xzf sqlite-autoconf-3460100.tar.gz
-          cd sqlite-autoconf-3460100
-          ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
-          make
-          sudo make install
-
-      - name: Build with GCC for Windows
-        run: |
-          cd src
-          make clean
-          make CC=x86_64-w64-mingw32-gcc CFLAGS="-I/usr/x86_64-w64-mingw32/include" LDFLAGS="-L/usr/x86_64-w64-mingw32/lib -lsqlite3"
+          mkdir -p build/app/db build/app/log
+          cd build
+          cmake ..
+          cmake --build .
 
       - name: Package Binaries
         run: |
-          if [ -f ./src/StockManager.exe ]; then
-            zip StockManager-windows.zip ./src/StockManager.exe
-            echo "STOCKMANAGER_PACKAGE=StockManager-windows.zip" >> $GITHUB_ENV
-          else
-            echo "StockManager.exe binary not found!" >&2
-            exit 1
-          fi
+          if (Test-Path "./app/StockManager.exe") {
+            Compress-Archive -Path "./app" -DestinationPath "StockManager-windows.zip"
+            echo "STOCKMANAGER_PACKAGE=StockManager-windows.zip" >> $env:GITHUB_ENV
+          } else {
+            Write-Host "StockManager.exe binary not found!" -ErrorAction Stop
+          }
 
       - name: Upload binaries as artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Binaries-windows-gcc
           path: ${{ env.STOCKMANAGER_PACKAGE }}
-
-  release:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v1.0.0-${{ github.run_number }}  # Use a run number for dynamic versioning
-          release_name: "Release v1.0.0"
-          draft: false
-          prerelease: false
-
-      - name: Upload Windows Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./src/${{ env.STOCKMANAGER_PACKAGE }}
-          asset_name: StockManager-windows.zip  
-          asset_content_type: application/zip

@@ -4,3 +4,11 @@ src/**/*.exe
 src/**/*.o
 
 src/**/*app
+src/build
+src/build/**/*
+
+
+
+src/app
+src/db
+src/log
