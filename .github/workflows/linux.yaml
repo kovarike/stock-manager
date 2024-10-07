@@ -24,7 +24,10 @@ jobs:
 
       - name: Configure and Build with CMake
         run: |
-          mkdir -p build/app/db build/app/log  # Cria as pastas db e log
+          mkdir build
+          mkdir build/app
+          mkdir -p build/app/db
+          mkdir -p build/app/log
           cd build
           cmake ..
           cmake --build .
