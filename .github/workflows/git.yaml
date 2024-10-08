@@ -39,7 +39,7 @@ jobs:
           cd build/windows
           cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain.cmake \
           -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
-          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../
+          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../ --debug-output --trace
           make
           
 
