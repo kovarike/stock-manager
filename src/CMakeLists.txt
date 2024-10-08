@@ -3,22 +3,22 @@ project(StockManager)
 
 
 if (WIN32)
-    # set(SQLite3_INCLUDE_DIR "/usr/x86_64-w64-mingw32/include")
-    # set(SQLite3_SYSROOT_INCLUDE_DIR "/usr/x86_64-w64-mingw32/sys-root/mingw/include")
-    # set(SQLite3_LIBRARY "/usr/x86_64-w64-mingw32/lib/libsqlite3.a")
+    set(SQLite3_INCLUDE_DIR "/usr/x86_64-w64-mingw32/include")
+    set(SQLite3_SYSROOT_INCLUDE_DIR "/usr/x86_64-w64-mingw32/sys-root/mingw/include")
+    set(SQLite3_LIBRARY "/usr/x86_64-w64-mingw32/lib/libsqlite3.a")
     # set(SQLite3_INCLUDE_DIR "/usr/include")
     # set(SQLite3_LIBRARY "/usr/lib/x86_64-linux-gnu/libsqlite3.so")
-    set(SQLite3_INCLUDE_DIR "/usr/x86_64-w64-mingw32/include")
-    set(SQLite3_LIBRARY "/usr/x86_64-w64-mingw32/lib/libsqlite3.a")
+    # set(SQLite3_INCLUDE_DIR "/usr/x86_64-w64-mingw32/include")
+    # set(SQLite3_LIBRARY "/usr/x86_64-w64-mingw32/lib/libsqlite3.a")
     # Adicione o caminho do MinGW
     include_directories("/usr/x86_64-w64-mingw32/include")
     
 else()
     
     set(SQLite3_INCLUDE_DIR "/usr/include")
-    set(SQLite3_LIBRARY "/usr/lib/x86_64-linux-gnu/libsqlite3.so")
+    # set(SQLite3_LIBRARY "/usr/lib/x86_64-linux-gnu/libsqlite3.so")
 
-    # set(SQLite3_LIBRARY "/usr/lib64/libsqlite3.so")
+    set(SQLite3_LIBRARY "/usr/lib64/libsqlite3.so")
     
     
 endif()
