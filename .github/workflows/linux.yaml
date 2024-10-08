@@ -86,9 +86,9 @@ jobs:
 
       - name: Package Binaries
         run: |
-          sudo ls -l ./app  # Log do conteúdo para verificação
-          if [ -f ./app/StockManager ]; then  # Verifica o executável fora da pasta build
-            tar -czvf StockManager-linux.tar.gz ./app
+          sudo ls -l ./build/app  # Log do conteúdo para verificação
+          if [ -f ./build/app/StockManager ]; then  # Verifica o executável fora da pasta build
+            tar -czvf StockManager-linux.tar.gz ./build/app
             echo "STOCKMANAGER_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
           else
             echo "StockManager binary not found!" >&2

@@ -93,7 +93,6 @@ jobs:
       - name: Configure and Build with CMake
         run: |
           cd src
-          rm build
           mkdir build
           cd build
           cmake -G "MinGW Makefiles" cmake -DSQLite3_INCLUDE_DIR="C:/ProgramData/chocolatey/lib/SQLite/tools" -DSQLite3_LIBRARY="C:/ProgramData/chocolatey/lib/SQLite/tools/sqlite3.dll" ..
