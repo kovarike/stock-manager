@@ -3,6 +3,9 @@ project(StockManager)
 
 
 if (WIN32)
+        set(CMAKE_CXX_COMPILER /usr/bin/x86_64-w64-mingw32-gcc)
+        set(CMAKE_CXX_COMPILER /usr/bin/x86_64-w64-mingw32-g++)
+
     set(SQLite3_INCLUDE_DIR "/usr/x86_64-w64-mingw32/include")
     set(SQLite3_SYSROOT_INCLUDE_DIR "/usr/x86_64-w64-mingw32/sys-root/mingw/include")
     set(SQLite3_LIBRARY "/usr/x86_64-w64-mingw32/lib/libsqlite3.a")
