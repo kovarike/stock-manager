@@ -89,3 +89,5 @@ endif()
 
 # Incluir diretórios de inclusão
 target_include_directories(StockManager PRIVATE ${SQLite3_INCLUDE_DIRS})  # Use esta variável
+
+
