@@ -1,3 +1,136 @@
+# name: Build and Release C Project
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 30
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up build environment
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y build-essential make cmake mingw-w64 g++-mingw-w64-x86-64 sqlite3 libsqlite3-dev uuid-dev
+#           sudo cp /usr/include/sqlite3.h /usr/x86_64-w64-mingw32/include/
+#           sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.a /usr/x86_64-w64-mingw32/lib/
+#           sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.so /usr/x86_64-w64-mingw32/lib/
+
+#           sudo cp -rn /usr/include/sqlite3* /usr/x86_64-w64-mingw32/include/
+#           sudo cp -rn /usr/lib/x86_64-linux-gnu/libsqlite3* /usr/x86_64-w64-mingw32/lib/
+
+#           sudo cp -rn /usr/include/* /usr/x86_64-w64-mingw32/include/
+#           sudo cp -rn /usr/lib/x86_64-linux-gnu/* /usr/x86_64-w64-mingw32/lib/
+
+#           sudo cp -rn /usr/include/ /usr/x86_64-w64-mingw32/include/
+#           sudo cp -rn /usr/lib/x86_64-linux-gnu/ /usr/x86_64-w64-mingw32/lib/
+          
+
+
+
+#       # Compilar para Linux
+#       - name: Build for Linux
+#         run: |
+#           cd src
+#           mkdir -p build/linux/app/db build/linux/app/log
+#           cd build/linux
+#           cmake -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../
+#           make
+
+#       # Compilar para Windows
+#       - name: Build for Windows
+#         run: |
+#           cd src
+#           mkdir -p build/windows/app/db build/windows/app/log
+#           cd build/windows
+#           cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain.cmake \
+#           -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+#           -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../ #--debug-output --trace
+#           make
+          
+
+#       # Empacotar os binários Linux
+#       - name: Package Linux Binary
+#         run: |
+#           if [ -f build/linux/app/StockManager ]; then
+#             cd build/linux
+#             tar -czvf StockManager-linux.tar.gz ./app/StockManager
+#             echo "STOCKMANAGER_LINUX_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
+#           else
+#             echo "Linux binary not found!" >&2
+#             exit 1
+#           fi
+
+#       # Empacotar os binários Windows
+#       - name: Package Windows Binary
+#         run: |
+#           if [ -f build/windows/app/StockManager.exe ]; then
+#             cd build/windows
+#             zip StockManager-windows.zip ./app/StockManager.exe
+#             echo "STOCKMANAGER_WINDOWS_PACKAGE=StockManager-windows.zip" >> $GITHUB_ENV
+#           else
+#             echo "Windows binary not found!" >&2
+#             exit 1
+#           fi
+
+#       # Upload dos binários como artefatos
+#       - name: Upload Linux Binary as artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: StockManager-linux
+#           path: ${{ env.STOCKMANAGER_LINUX_PACKAGE }}
+
+#       - name: Upload Windows Binary as artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: StockManager-windows
+#           path: ${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}
+
+#   release:
+#     runs-on: ubuntu-latest
+#     needs: build
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Create GitHub Release
+#         id: create_release
+#         uses: actions/create-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           tag_name: v1.0.0-${{ github.run_number }}
+#           release_name: "Release v1.0.0"
+#           draft: false
+#           prerelease: false
+
+#       - name: Upload Linux Release Asset
+#         uses: actions/upload-release-asset@v1
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }}
+#           asset_path: ${{ github.workspace }}/build/linux/${{ env.STOCKMANAGER_LINUX_PACKAGE }}
+#           asset_name: StockManager-linux.tar.gz
+#           asset_content_type: application/gzip
+
+#       - name: Upload Windows Release Asset
+#         uses: actions/upload-release-asset@v1
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }}
+#           asset_path: ${{ github.workspace }}/build/windows/${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}
+#           asset_name: StockManager-windows.zip
+#           asset_content_type: application/zip
+
+
 name: Build and Release C Project
 
 on:
@@ -10,7 +143,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: fedora-latest
     timeout-minutes: 30
 
     steps:
@@ -19,28 +152,12 @@ jobs:
 
       - name: Set up build environment
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential make cmake mingw-w64 g++-mingw-w64-x86-64 sqlite3 libsqlite3-dev uuid-dev
-          sudo cp /usr/include/sqlite3.h /usr/x86_64-w64-mingw32/include/
-          sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.a /usr/x86_64-w64-mingw32/lib/
-          sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.so /usr/x86_64-w64-mingw32/lib/
-
-          sudo cp -rn /usr/include/sqlite3* /usr/x86_64-w64-mingw32/include/
-          sudo cp -rn /usr/lib/x86_64-linux-gnu/libsqlite3* /usr/x86_64-w64-mingw32/lib/
-
-          sudo cp -rn /usr/include/* /usr/x86_64-w64-mingw32/include/
-          sudo cp -rn /usr/lib/x86_64-linux-gnu/* /usr/x86_64-w64-mingw32/lib/
-
-          sudo cp -rn /usr/include/ /usr/x86_64-w64-mingw32/include/
-          sudo cp -rn /usr/lib/x86_64-linux-gnu/ /usr/x86_64-w64-mingw32/lib/
-          
-
-
+          # Instalar pacotes necessários
+          sudo dnf install -y gcc gcc-c++ make cmake mingw32-gcc-c++ mingw64-gcc-c++ sqlite sqlite-devel uuid-devel
 
       # Compilar para Linux
       - name: Build for Linux
         run: |
-          cd src
           mkdir -p build/linux/app/db build/linux/app/log
           cd build/linux
           cmake -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../
@@ -49,14 +166,12 @@ jobs:
       # Compilar para Windows
       - name: Build for Windows
         run: |
-          cd src
           mkdir -p build/windows/app/db build/windows/app/log
           cd build/windows
           cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain.cmake \
           -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
-          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../ #--debug-output --trace
+          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../ 
           make
-          
 
       # Empacotar os binários Linux
       - name: Package Linux Binary
@@ -96,7 +211,7 @@ jobs:
           path: ${{ env.STOCKMANAGER_WINDOWS_PACKAGE }}
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: fedora-latest
     needs: build
 
     steps:
