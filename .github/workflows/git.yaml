@@ -26,7 +26,6 @@ jobs:
       - name: Build for Linux
         run: |
           cd src
-          rm -rf build
           mkdir -p build/linux/app/db build/linux/app/log
           cd build/linux
           cmake -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../
