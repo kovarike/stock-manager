@@ -26,6 +26,7 @@ jobs:
       - name: Build for Linux
         run: |
           cd src
+          sudo rm -rf build
           mkdir build
           mkdir build/linux
           mkdir build/linux/app
@@ -39,7 +40,6 @@ jobs:
       - name: Build for Windows
         run: |
           cd src
-          mkdir build
           mkdir build/windows
           mkdir build/windows/app
           mkdir -p build/windows/app/db 

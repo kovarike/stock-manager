@@ -76,6 +76,7 @@ jobs:
       - name: Configure and Build with CMake
         run: |
           cd src
+          sudo rm -rf build
           mkdir build
           mkdir -p build/app/db
           mkdir -p build/app/log
@@ -85,7 +86,7 @@ jobs:
 
       - name: Package Binaries
         run: |
-          ls -l ./app  # Log do conteúdo para verificação
+          sudo ls -l ./app  # Log do conteúdo para verificação
           if [ -f ./app/StockManager ]; then  # Verifica o executável fora da pasta build
             tar -czvf StockManager-linux.tar.gz ./app
             echo "STOCKMANAGER_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
