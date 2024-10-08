@@ -14,6 +14,10 @@ set(SOURCES
 
 # Incluir diretórios e bibliotecas do SQLite
 find_package(SQLite3 REQUIRED)
+set(SQLite3_INCLUDE_DIR "C:/ProgramData/chocolatey/lib/SQLite/tools")
+set(SQLite3_LIBRARY "C:/ProgramData/chocolatey/lib/SQLite/tools/libsqlite3.dll")
+
+
 
 # Criar o executável no diretório build/app
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/app)

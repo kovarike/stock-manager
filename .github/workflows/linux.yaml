@@ -35,7 +35,7 @@ jobs:
 
       - name: Package Binaries
         run: |
-          if [ -f ./app/StockManager ]; then  # Altera o caminho para o executável
+          if [ -f ./build/app/StockManager ]; then  # Altera o caminho para o executável
             tar -czvf StockManager-linux.tar.gz ./app
             echo "STOCKMANAGER_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
           else

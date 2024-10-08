@@ -32,12 +32,12 @@ jobs:
           mkdir -p build/app/db
           mkdir -p build/app/log
           cd build
-          cmake ..
+          cmake .. 
           cmake --build .
 
       - name: Package Binaries
         run: |
-          if (Test-Path "./app/StockManager.exe") {
+          if (Test-Path "./build/app/StockManager.exe") {
             Compress-Archive -Path "./app" -DestinationPath "StockManager-windows.zip"
             echo "STOCKMANAGER_PACKAGE=StockManager-windows.zip" >> $env:GITHUB_ENV
           } else {
