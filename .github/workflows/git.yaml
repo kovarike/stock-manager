@@ -20,33 +20,27 @@ jobs:
       - name: Set up build environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake mingw-w64 mingw-w64 g++-mingw-w64-x86-64 sqlite3 libsqlite3-dev uuid-dev
+          sudo apt-get install -y build-essential cmake mingw-w64 sqlite3 libsqlite3-dev uuid-dev
 
       # Compilar para Linux
       - name: Build for Linux
         run: |
           cd src
-          sudo rm -rf build
-          mkdir build
-          mkdir build/linux
-          mkdir build/linux/app
-          mkdir -p build/linux/app/db 
-          mkdir -p build/linux/app/log
+          rm -rf build
+          mkdir -p build/linux/app/db build/linux/app/log
           cd build/linux
-          cmake ../../
+          cmake -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../
           make
 
       # Compilar para Windows
       - name: Build for Windows
         run: |
           cd src
-          mkdir build/windows
-          mkdir build/windows/app
-          mkdir -p build/windows/app/db 
-          mkdir -p build/windows/app/log
+          mkdir -p build/windows/app/db build/windows/app/log
           cd build/windows
-          cmake -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw-w64/toolchain-x86_64-w64-mingw32.cmake ../../
+          cmake -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw-w64/toolchain-x86_64-w64-mingw32.cmake -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app ../../
           make
+          
 
       # Empacotar os binários Linux
       - name: Package Linux Binary
