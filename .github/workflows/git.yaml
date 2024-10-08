@@ -21,9 +21,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential make cmake mingw-w64 g++-mingw-w64-x86-64 sqlite3 libsqlite3-dev uuid-dev
-          sudo cp /usr/include/sqlite3.h /usr/x86_64-w64-mingw32/include/
-          sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.a /usr/x86_64-w64-mingw32/lib/
-          sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.so /usr/x86_64-w64-mingw32/lib/
+          sudo cp -r /usr/include/sqlite3 /usr/x86_64-w64-mingw32/include/
+          sudo cp -r /usr/lib/x86_64-linux-gnu/libsqlite3 /usr/x86_64-w64-mingw32/lib/
+          sudo cp -r /usr/lib/x86_64-linux-gnu/libsqlite3.so /usr/x86_64-w64-mingw32/lib/
+
 
 
       # Compilar para Linux
