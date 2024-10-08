@@ -12,12 +12,7 @@
 #define MAX_PRODUTOS 5000
 #define SQL_BUFFER_SIZE 1024
 
-// typedef struct {
-//     int codigo;
-//     double preco_custo;
-//     double preco_novo;
-//     int estoque;
-// } Produto;
+
 typedef struct Produto {
     int codigo;
     double preco_custo;

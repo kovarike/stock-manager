@@ -38,10 +38,7 @@ jobs:
           cd src
           mkdir -p build/windows/app/db build/windows/app/log
           cd build/windows
-          cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain.cmake \
-                -DCMAKE_C_COMPILER=/usr/bin/x86_64-w64-mingw32-gcc \
-                -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${PWD}/app \
-                -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON ../../
+          cmake -DCMAKE_TOOLCHAIN_FILE=/usr/x86_64-w64-mingw32/share/cmake/win32-mingw-toolchain.cmake ../../
           make
 
       # Empacotar os binários Linux

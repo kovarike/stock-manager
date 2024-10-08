@@ -74,30 +74,30 @@
 cmake_minimum_required(VERSION 3.10)
 project(StockManager)
 
-if (WIN32)
-    set(CMAKE_CXX_COMPILER /usr/bin/x86_64-w64-mingw32-g++)
-    set(CMAKE_C_COMPILER /usr/bin/x86_64-w64-mingw32-gcc)
-    set(SQLite3_INCLUDE_DIR "/usr/x86_64-w64-mingw32/include")
-    set(SQLite3_LIBRARY "/usr/x86_64-w64-mingw32/lib/libsqlite3.a")
-else()
-    set(SQLite3_INCLUDE_DIR "/usr/include")
-    set(SQLite3_LIBRARY "/usr/lib64/libsqlite3.so")
-endif()
+# if (WIN32)
+#     set(CMAKE_CXX_COMPILER /usr/bin/x86_64-w64-mingw32-g++)
+#     set(CMAKE_C_COMPILER /usr/bin/x86_64-w64-mingw32-gcc)
+#     set(SQLite3_INCLUDE_DIR "/usr/x86_64-w64-mingw32/include")
+#     set(SQLite3_LIBRARY "/usr/x86_64-w64-mingw32/lib/libsqlite3.a")
+# else()
+#     set(SQLite3_INCLUDE_DIR "/usr/include")
+#     set(SQLite3_LIBRARY "/usr/lib64/libsqlite3.so")
+# endif()
+
+
+set(SOURCES
+app.c
+client/manage.c
+lib/sh.c
+lib/command.c
+lib/db.c
+lib/login.c
+lib/print.c
+)
 
 find_package(SQLite3 REQUIRED)
 
 include_directories(${SQLite3_INCLUDE_DIRS})
-
-set(SOURCES
-    app.c
-    client/manage.c
-    lib/sh.c
-    lib/command.c
-    lib/db.c
-    lib/login.c
-    lib/print.c
-)
-
 # Criar o executável
 add_executable(StockManager ${SOURCES})
 
@@ -114,3 +114,7 @@ endif()
 
 # Incluir diretórios de inclusão
 target_include_directories(StockManager PRIVATE ${SQLite3_INCLUDE_DIRS})
+
+
+
+# cmake -DCMAKE_TOOLCHAIN_FILE=/usr/x86_64-w64-mingw32/share/cmake/win32-mingw-toolchain.cmake
