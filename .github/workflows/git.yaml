@@ -32,7 +32,7 @@ jobs:
           mkdir -p build/linux/app/db 
           mkdir -p build/linux/app/log
           cd build/linux
-          cmake .. ..
+          cmake ../../
           make
 
       # Compilar para Windows
@@ -45,7 +45,7 @@ jobs:
           mkdir -p build/windows/app/db 
           mkdir -p build/windows/app/log
           cd build/windows
-          cmake .. .. -DCMAKE_TOOLCHAIN_FILE=/usr/x86_64-w64-mingw32/share/cmake/win32-mingw-toolchain.cmake .. ..
+          cmake -DCMAKE_TOOLCHAIN_FILE=/usr/x86_64-w64-mingw32/share/cmake/win32-mingw-toolchain.cmake ../../
           make
 
       # Empacotar os binários Linux

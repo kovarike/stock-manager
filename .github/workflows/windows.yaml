@@ -95,7 +95,8 @@ jobs:
           cd src
           mkdir build
           cd build
-          cmake .. -G "MinGW Makefiles" -DSQLite3_INCLUDE_DIR=%SQLite3_INCLUDE_DIR% -DSQLite3_LIBRARY=%SQLite3_LIBRARY%
+          cmake -G "MinGW Makefiles" cmake -DSQLite3_INCLUDE_DIR="C:/ProgramData/chocolatey/lib/SQLite/tools" -DSQLite3_LIBRARY="C:/ProgramData/chocolatey/lib/SQLite/tools/sqlite3.dll" ..
+
           mingw32-make
 
       - name: Package Binaries
