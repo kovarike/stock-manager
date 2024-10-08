@@ -59,6 +59,8 @@ target_link_libraries(StockManager PRIVATE SQLite::SQLite3)
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(StockManager PRIVATE WIN32)
     set_target_properties(StockManager PROPERTIES SUFFIX ".exe")
+    target_link_libraries(StockManager PRIVATE SQLite::SQLite3)
+
 else()
     target_compile_definitions(StockManager PRIVATE LINUX)
 endif()
