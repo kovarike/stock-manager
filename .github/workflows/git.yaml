@@ -45,15 +45,15 @@ jobs:
           mkdir -p build/windows/app/db 
           mkdir -p build/windows/app/log
           cd build/windows
-          cmake -DCMAKE_TOOLCHAIN_FILE=/usr/x86_64-w64-mingw32/share/cmake/win32-mingw-toolchain.cmake .. ..
+          cmake .. .. -DCMAKE_TOOLCHAIN_FILE=/usr/x86_64-w64-mingw32/share/cmake/win32-mingw-toolchain.cmake .. ..
           make
 
       # Empacotar os binários Linux
       - name: Package Linux Binary
         run: |
           if [ -f build/linux/app/StockManager ]; then
-            cd build/linux/app
-            tar -czvf StockManager-linux.tar.gz StockManager
+            cd build/linux
+            tar -czvf StockManager-linux.tar.gz ./app/StockManager
             echo "STOCKMANAGER_LINUX_PACKAGE=StockManager-linux.tar.gz" >> $GITHUB_ENV
           else
             echo "Linux binary not found!" >&2
@@ -64,8 +64,8 @@ jobs:
       - name: Package Windows Binary
         run: |
           if [ -f build/windows/app/StockManager.exe ]; then
-            cd build/windows/app
-            zip StockManager-windows.zip StockManager.exe
+            cd build/windows
+            zip StockManager-windows.zip ./app/StockManager.exe
             echo "STOCKMANAGER_WINDOWS_PACKAGE=StockManager-windows.zip" >> $GITHUB_ENV
           else
             echo "Windows binary not found!" >&2

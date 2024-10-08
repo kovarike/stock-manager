@@ -1,3 +1,63 @@
+# name: Build project C for Windows
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: windows-latest
+#     timeout-minutes: 30
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Install MinGW and dependencies
+#         run: |
+#           choco install mingw --yes
+#           choco install sqlite --yes
+#           choco install make --yes
+#           choco install cmake --yes
+      
+#       - name: Set SQLite paths
+#         run: |
+#           echo "Setting SQLite paths"
+#           echo "SQLite3_INCLUDE_DIR=C:/ProgramData/chocolatey/lib/SQLite/tools/include" >> $GITHUB_ENV
+#           echo "SQLite3_LIBRARY=C:/ProgramData/chocolatey/lib/SQLite/tools/libsqlite3.dll" >> $GITHUB_ENV
+
+
+#       - name: Configure and Build with CMake
+#         run: |
+#           cd src
+#           mkdir build
+#           mkdir build/app
+#           mkdir -p build/app/db
+#           mkdir -p build/app/log
+#           cd build
+#           cmake .. -DSQLite3_INCLUDE_DIR=%SQLite3_INCLUDE_DIR% -DSQLite3_LIBRARY=%SQLite3_LIBRARY%
+#           cmake --build .
+
+#       - name: Package Binaries
+#         run: |
+#           if (Test-Path "./build/app/StockManager.exe") {
+#             Compress-Archive -Path "./app" -DestinationPath "StockManager-windows.zip"
+#             echo "STOCKMANAGER_PACKAGE=StockManager-windows.zip" >> $env:GITHUB_ENV
+#           } else {
+#             Write-Host "StockManager.exe binary not found!" -ErrorAction Stop
+#           }
+
+#       - name: Upload binaries as artifacts
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: Binaries-windows-gcc
+#           path: ${{ env.STOCKMANAGER_PACKAGE }}
+
+
 name: Build project C for Windows
 
 on:
@@ -24,20 +84,23 @@ jobs:
           choco install make --yes
           choco install cmake --yes
 
+      - name: Set SQLite paths
+        run: |
+          echo "Setting SQLite paths"
+          echo "SQLite3_INCLUDE_DIR=C:/ProgramData/chocolatey/lib/SQLite/tools/include" >> $GITHUB_ENV
+          echo "SQLite3_LIBRARY=C:/ProgramData/chocolatey/lib/SQLite/tools/libsqlite3.dll" >> $GITHUB_ENV
+
       - name: Configure and Build with CMake
         run: |
           cd src
           mkdir build
-          mkdir build/app
-          mkdir -p build/app/db
-          mkdir -p build/app/log
           cd build
-          cmake .. 
-          cmake --build .
+          cmake .. -G "MinGW Makefiles" -DSQLite3_INCLUDE_DIR=%SQLite3_INCLUDE_DIR% -DSQLite3_LIBRARY=%SQLite3_LIBRARY%
+          mingw32-make
 
       - name: Package Binaries
         run: |
-          if (Test-Path "./build/app/StockManager.exe") {
+          if (Test-Path "./app/StockManager.exe") {
             Compress-Archive -Path "./app" -DestinationPath "StockManager-windows.zip"
             echo "STOCKMANAGER_PACKAGE=StockManager-windows.zip" >> $env:GITHUB_ENV
           } else {
