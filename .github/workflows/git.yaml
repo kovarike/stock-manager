@@ -25,11 +25,13 @@ jobs:
           sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.a /usr/x86_64-w64-mingw32/lib/
           sudo cp /usr/lib/x86_64-linux-gnu/libsqlite3.so /usr/x86_64-w64-mingw32/lib/
 
-          sudo cp /usr/include/sqlite3* /usr/x86_64-w64-mingw32/include/
+          sudo cp -rn /usr/include/sqlite3* /usr/x86_64-w64-mingw32/include/
           sudo cp -rn /usr/lib/x86_64-linux-gnu/libsqlite3* /usr/x86_64-w64-mingw32/lib/
 
-          sudo cp -rn /usr/include/ /usr/x86_64-w64-mingw32/include/
+          sudo cp -rn /usr/include/* /usr/x86_64-w64-mingw32/include/
+          sudo cp -rn /usr/lib/x86_64-linux-gnu/* /usr/x86_64-w64-mingw32/lib/
 
+          sudo cp -rn /usr/include/ /usr/x86_64-w64-mingw32/include/
           sudo cp -rn /usr/lib/x86_64-linux-gnu/ /usr/x86_64-w64-mingw32/lib/
           
 
